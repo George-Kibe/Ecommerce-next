@@ -4,4 +4,4 @@ This is a simple list of the Ten richest people. You can drag each name to a des
 You can customize it to a list of whatever kind of items you want.
 
 ### A screenshot of user interface below
-![](screenshot.png)
+![](screenshot.PNG)
