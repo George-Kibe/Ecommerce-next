@@ -8,8 +8,6 @@ import Products from "./pages/Products/Products"
 
 import "./App.scss"
 
-// continue from 32:00
-
 const Layout = () => {
   return (
     <div className="app">
