@@ -6,7 +6,7 @@ import Home from "./pages/Home/Home";
 import Product from "./pages/Product/Product";
 import Products from "./pages/Products/Products"
 
-// continue from 1 hour
+// continue from 1:28
 
 import "./App.scss"
 
