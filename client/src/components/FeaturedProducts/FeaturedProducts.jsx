@@ -1,47 +1,33 @@
-import React from 'react'
+import React, { useState, useEffect} from 'react'
 import Card from '../Card/Card'
+import axios from "axios"
 
 import "./FeaturedProducts.scss"
 
 const FeaturedProducts = ({type}) => {
-  const data =[
-    {
-        id:1,
-        img:"https://i.ibb.co/7jbBCdR/realestate14.jpg",
-        img2:"https://i.ibb.co/zHyKh32/realestate17.jpg",
-        title:"Luxurious 5 Bed Maisonette",
-        isNew:true,
-        oldPrice:2500,
-        price:1500
-    },
-    {
-        id:2,
-        img:"https://i.ibb.co/7jbBCdR/realestate14.jpg",
-        img2:"https://i.ibb.co/zHyKh32/realestate17.jpg",
-        title:"Luxurious 5 Bed Maisonette",
-        isNew:false,
-        oldPrice:2500,
-        price:1500
-    },
-    {
-        id:3,
-        img:"https://i.ibb.co/7jbBCdR/realestate14.jpg",
-        img2:"https://i.ibb.co/zHyKh32/realestate17.jpg",
-        title:"Luxurious 5 Bed Maisonette",
-        isNew:true,
-        oldPrice:2500,
-        price:1500
-    },
-    {
-        id:4,
-        img:"https://i.ibb.co/7jbBCdR/realestate14.jpg",
-        img2:"https://i.ibb.co/zHyKh32/realestate17.jpg",
-        title:"Luxurious 5 Bed Maisonette",
-        isNew:false,
-        oldPrice:2500,
-        price:1500
-    },
-  ]
+  const [products, setProducts] = useState([])
+
+  const fetchData = async () => {
+    try{
+        const response = await axios.get(process.env.REACT_APP_API_URL+`/products?populate=*&[filters][type][$eq]=${type}`, 
+        {
+            headers:{
+                Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
+            }
+        })
+        setProducts(response.data.data)
+        //console.log(response.data.data)
+    }catch(error){
+        console.log(error)
+    }
+  }  
+
+  useEffect(() => {    
+    fetchData()
+    
+  }, [])
+  
+
   return (
     <div className='featuredProducts'>
         <div className="top">
@@ -52,7 +38,7 @@ const FeaturedProducts = ({type}) => {
         </div>
         <div className="bottom">
             {
-                data.map((item) => (
+                products.map((item) => (
                     <Card item={item} key={item.id}/>
                 ))
             }
