@@ -6,8 +6,7 @@ import Home from "./pages/Home/Home";
 import Product from "./pages/Product/Product";
 import Products from "./pages/Products/Products"
 
-// continue from 1:28
-
+// continue from 2:31:00
 import "./App.scss"
 
 const Layout = () => {
