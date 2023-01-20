@@ -6,13 +6,17 @@ import { useParams } from 'react-router-dom'
 import useFetch from '../../hooks/useFetch'
 
 import "./Product.scss"
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../../redux/cartReducer'
 
 function Product() {
   const id = useParams().id
   const [selectedImage, setSelectedImage] = useState("img")
   const [quantity, setQuantity] = useState(1)
   const imagesPath = process.env.REACT_APP_MEDIA_URL
-  console.log(imagesPath)
+  const dispatch = useDispatch()
+
+  //console.log(imagesPath)
 
   const {products:product, loading, error} = useFetch(`/products/${id}?populate=*`);
 
@@ -42,7 +46,20 @@ function Product() {
               {quantity}
               <button onClick={() =>setQuantity(prev=>prev+1)}>+</button>
             </div>
-            <button className="add">
+            <button className="add" 
+              onClick = {() => 
+                dispatch(
+                  addToCart({
+                    id: product.id,
+                    title:product.attributes.title,
+                    description:product.attributes.description,
+                    price:product.attributes.price,
+                    img:product.attributes.img.data.attributes.url,
+                    quantity,
+                })
+                )
+              }
+            >
               <AddShoppingCartIcon /> ADD TO CART
             </button>
             <div className="links">
