@@ -6,8 +6,7 @@ import { useRouter } from 'next/navigation'
 
 export default function Home() {
   const session = useSession();
-  console.log(session)
-  console.log(session?.data?.user.image);
+  // console.log(session)
 
   if (session.status === "loading") {
     return (
@@ -20,7 +19,7 @@ export default function Home() {
   if (session.status === "unauthenticated") {
     //router?.push("/dashboard/login");
     return (
-      <div className="bg-blue-900 w-screen h-screen flex items-center">
+      <div className="bg-blue-900 w-screen ">
         <div className="text-center w-full">
           <button onClick={() => signIn('google')} className="bg-white p-2 px-4 rounded-lg">Login with Google</button>
         </div>
@@ -29,7 +28,7 @@ export default function Home() {
   }
   if (session.status === "authenticated") {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      <div className="flex flex-col items-center p-8 h-screen">
         <div className='flex flex-row justify-center items-center gap-2'>
           {
             session.data.user.image && 
