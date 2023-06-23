@@ -1,5 +1,6 @@
 "use client"
 import axios from 'axios'
+import moment from 'moment'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
@@ -39,7 +40,7 @@ const AllProducts = () => {
             <td className="border p-1">Product Name</td>
             <td className="border p-1">Product Price</td>
             <td className="border p-1">Product Description</td>
-            <td className="border p-1">Creation Date</td>
+            <td className="border p-1">Created</td>
             <td className="border p-1">Action</td>
           </tr>
         </thead>
@@ -51,7 +52,8 @@ const AllProducts = () => {
                 <td className="border p-1">{product.title}</td>
                 <td className="border p-1">{product.price}</td>
                 <td className="border p-1 flex-wrap">{product.description}</td>
-                <td className="border p-1">{product.createdAt}</td>
+                {/* <td className="border p-1">{moment(product.createdAt).format('YYYY-MM-DD')}</td> */}
+                <td className="border p-1">・{moment(product.createdAt).fromNow()}</td>
                 <td className="border p-2">
                   <Link href={`/products/${product._id}`} className='bg-blue-900 p-2 mr-2 text-white rounded-xl'>
 
