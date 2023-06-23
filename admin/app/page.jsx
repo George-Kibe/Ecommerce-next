@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Navbar from '@/components/Navbar';
 
 export default function Home() {
   const session = useSession();
@@ -28,19 +29,9 @@ export default function Home() {
   }
   if (session.status === "authenticated") {
     return (
-      <div className="flex flex-col items-center p-8 h-screen">
-        <div className='flex flex-row justify-center items-center gap-2'>
-          {
-            session.data.user.image && 
-            <Image src={session.data.user.image} width={50} height={50} alt={session.data.user.image} 
-              className='rounded-full'
-            />
-          }
-          <p>Logged in as {session.data.user.name}-{session.data.user.email}</p>
-        </div>
-      </div>  
+      <div className="">
+        <p>Logged in as {session.data.user.name}-{session.data.user.email}</p>
+      </div>
     )  
-  }
-
- 
+  } 
 }
