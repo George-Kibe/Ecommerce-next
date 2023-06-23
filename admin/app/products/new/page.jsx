@@ -1,5 +1,6 @@
 "use client"
 import axios from 'axios'
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,6 +9,7 @@ const AddNewProduct = () => {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState('')
+  const router = useRouter();
 
   const saveProduct = async(e) => {
     e.preventDefault()
@@ -22,13 +24,14 @@ const AddNewProduct = () => {
     if(response.status === 201){
         toast.success("Product added successfully to database")
         setTitle(""); setDescription(""); setPrice("")
+        router.push("/products")
     }else{
         toast.error("Product not added to database. Try again!")
     }
   }
   
   return (
-    <div className="">
+    <div className="w-full h-full">
       <ToastContainer />
       <form onSubmit={saveProduct} className="text-blue-900 flex flex-col p-4">
         <h1 className="mb-2 text-xl">New Product</h1>

@@ -13,15 +13,14 @@ import connect from "@/lib/db";
 
 async function handler(req,res){
     const {method} = req;
-    const body = await req.json()
-    const {title, description, price} = body;
-    // mongoose.Promise = clientPromise;
     await connect();
-    const newProduct = new Product({
-        title, description, price:parseInt(price)
-    })
-    console.log(newProduct)
+    
     if (method === "POST"){
+        const body = await req.json()
+        const {title, description, price} = body;
+        const newProduct = new Product({
+            title, description, price:parseInt(price)
+        })
         try {
             await newProduct.save();
             console.log("saved!")
@@ -29,8 +28,13 @@ async function handler(req,res){
         } catch (error) {
             console.log("Product saving error!")
             return new NextResponse(error.message, {status: 422})
-
         }      
+    }
+    if (method === "GET"){
+      const products = await  Product.find()
+      const allProducts = JSON.stringify(products)
+      console.log(allProducts)
+      return new NextResponse(allProducts, {status: 200})
     }
     
 }
