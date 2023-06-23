@@ -15,8 +15,16 @@ const AddNewProduct = () => {
       toast.error("You have missing details!");
       return
     }
+    toast.info("Adding your Product to Database")
     const data = {title, description, price}
-    const response = await axios.post("/api/products", data)
+    const response = await axios.post("/api/products/", data)
+    console.log(response)
+    if(response.status === 201){
+        toast.success("Product added successfully to database")
+        setTitle(""); setDescription(""); setPrice("")
+    }else{
+        toast.error("Product not added to database. Try again!")
+    }
   }
   
   return (
