@@ -3,20 +3,10 @@
 import Image from 'next/image'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import Navbar from '@/components/Navbar';
 
 export default function Home() {
   const session = useSession();
   // console.log(session)
-
-  if (session.status === "loading") {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <div className="w-24 h-24 border-8 border-t-8 border-gray-500 rounded-full animate-spin"></div>
-        <h1 className="mt-8 text-3xl font-semibold text-gray-800">Loading...</h1>
-      </div>
-    );
-  }
   if (session.status === "unauthenticated") {
     //router?.push("/dashboard/login");
     return (
@@ -29,9 +19,15 @@ export default function Home() {
   }
   if (session.status === "authenticated") {
     return (
-      <div className="">
-        <p>Logged in as {session.data.user.name}-{session.data.user.email}</p>
-      </div>
+      <div className="text-blue-900 w-full flex justify-between">
+        <h2 className="">Hello , {session.data.user.name}</h2>
+        <div className="flex bg-gray-300 gap-1 py-1 rounded-2xl px-2 justify-center items-center text-black">
+          <div className="w-8 h-8 relative">
+            <Image src={session.data.user.image} fill alt={session.data.user.image} className='w-6 h-6 rounded-full' />
+          </div>
+            <p>{session.data.user.name}</p>
+        </div>
+      </div>    
     )  
   } 
 }

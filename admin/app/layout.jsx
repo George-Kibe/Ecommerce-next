@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
         <div className="flex h-screen">
           <Navbar />
-          <div className='bg-white flex p-2 flex-1 flex-row mr-2 mb-2 rounded-lg text-black'>
+          <div className='flex bg-white w-full p-2 flex-1 flex-col  mb-2 rounded-lg text-black'>
             {children}
           </div>
         </div>  
