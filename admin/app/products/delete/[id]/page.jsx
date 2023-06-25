@@ -27,8 +27,11 @@ const DeleteProduct = ({params}) => {
   }
   const deleteProduct = async() => {
     try {
-      const response = await axios.get(`/api/products?id=${id}`)
-      toast.error("Deleted Successfully!")
+      const response = await axios.delete(`/api/products/${id}`)
+      if (response.status === 200){
+        toast.error("Deleted Successfully!")
+        router.back()
+      }
     } catch (error) {
       toast.error("Product not found: 404")
     }
@@ -46,7 +49,7 @@ const DeleteProduct = ({params}) => {
         
         <div className="flex flex-row gap-4">
           <button onClick={cancelDelete} className="bg-red-500 p-2 flex flex-row gap-1 rounded-xl text-white">Cancel</button>
-          <button className="bg-blue-900 p-2 px-4 flex flex-row gap-1 rounded-xl text-white">Yes</button>
+          <button onClick={deleteProduct} className="bg-blue-900 p-2 px-4 flex flex-row gap-1 rounded-xl text-white">Yes</button>
         </div>
       </div> 
     </div>
