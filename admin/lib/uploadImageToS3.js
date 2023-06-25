@@ -1,11 +1,11 @@
 import AWS from 'aws-sdk';
 
-const AWS_ACCESS_KEY_ID=process.env.AWS_ACCESS_KEY_ID
-const AWS_SECRET_ACCESS_KEY=process.env.AWS_SECRET_ACCESS_KEY
-const AWS_S3_REGION=process.env.AWS_S3_REGION
-const S3_BUCKET_NAME=process.env.S3_BUCKET_NAME
+const AWS_ACCESS_KEY_ID=process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
+const AWS_SECRET_ACCESS_KEY=process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
+const AWS_S3_REGION=process.env.NEXT_PUBLIC_AWS_S3_REGION
+const S3_BUCKET_NAME=process.env.NEXT_PUBLIC_S3_BUCKET_NAME
 
-async function uploadImageToS3(file) {
+async function uploadImageToS3(file, ext) {
   // Configure AWS SDK
   AWS.config.update({
     accessKeyId: AWS_ACCESS_KEY_ID,
@@ -15,7 +15,7 @@ async function uploadImageToS3(file) {
 
   const s3 = new AWS.S3();
   // Generate a unique filename for the uploaded image
-  const fileName = `${Date.now()}_${file.name}`;
+  const fileName = `${Date.now()}.${ext}`;
 
   // Set the parameters for S3 upload
   const params = {

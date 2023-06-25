@@ -1,5 +1,5 @@
 "use client"
-import uploadImageToS3 from '@/lib/UploadImageToS3';
+import uploadImageToS3 from '@/lib/uploadImageToS3';
 import axios from 'axios'
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react'
@@ -17,17 +17,34 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
   const pathname = usePathname()
   const uploadImages = async(event) => {
     const files = event.target?.files;
-    if(files.length < 0){return}
-    const file=files[0]
-    try {
-      const imageUrl = await uploadImageToS3(file);
-      console.log('Image URL:', imageUrl);
-      // Do something with the image URL, such as storing it in your Next.js state or sending it to your server
-    } catch (error) {
-      // Handle error
+    const uploadedFiles = [];
+    if(files.length < 1){
+      toast.error("You have no image(s)")
+      return
     }
+    toast.info("Uplading your Image(s)")
+    for (let i = 0; i < files.length; i++) {
+      try {
+        const parts = files[i].name.split(".")
+        const ext = parts[parts.length-1];
+        if(ext !=="png" && ext!=="jpg" && ext !=="jpeg"){
+          toast.error(`Error Uploading ${ext} Images format. Not recognized.`)
+          return
+        }
+        const uploadUrl = await uploadImageToS3(files[i], ext);
+        console.log('Image URL:', uploadUrl);
+        uploadedFiles.push(uploadUrl)
+      } catch (error) {
+        toast.error("Error Uploading one of the Images")
+      }      
+    }
+    // console.log("Uploaded Files: ",uploadedFiles)
+    setImages(prev => {
+      return prev? [...prev, ...uploadedFiles] : [...uploadedFiles]
+    }); 
+    toast.success("Image(s) uploaded successfully")
   }
-
+  console.log("All images:", images)
   const saveProduct = async(e) => {
     e.preventDefault()
     if(!title| !description |!price){
@@ -92,7 +109,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
             </svg>
             Upload
-            <input type="file" onChange={uploadImages} className='hidden' />
+            <input type="file" multiple onChange={uploadImages} className='hidden' />
           </label>
           {
             !images?.length && (
