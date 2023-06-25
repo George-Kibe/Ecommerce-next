@@ -2,14 +2,15 @@
 import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
-const EditProductData = () => {
+const ViewProductInformation = () => {
   const pathname = usePathname();
   const router = useRouter()
-  console.log(pathname)
+  const id = pathname.split("/")[-1]
+  console.log("ID:", id)
 
   return (
-    <div>EditProductData</div>
+    <div>ViewProductInformation</div>
   )
 }
 
-export default EditProductData
+export default ViewProductInformation

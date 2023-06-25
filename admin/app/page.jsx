@@ -10,7 +10,7 @@ export default function Home() {
   if (session.status === "unauthenticated") {
     //router?.push("/dashboard/login");
     return (
-      <div className="bg-blue-900 w-screen ">
+      <div className="flex bg-blue-900 h-screen w-full rounded-md items-center justify-center">
         <div className="text-center w-full">
           <button onClick={() => signIn('google')} className="bg-white p-2 px-4 rounded-lg">Login with Google</button>
         </div>

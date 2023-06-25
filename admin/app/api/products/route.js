@@ -1,15 +1,6 @@
-// import clientPromise from "@/lib/mongodb";
 import Product from "@/models/Product";
-// import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import connect from "@/lib/db";
-
-// export const POST = async (request) => {
-//     const body = await request.json()
-//     console.log(body)
-//     const {name, email, password} = await request.json();
-//     return new NextResponse(req.method, { status:200})
-// }
 
 async function handler(req,res){
     const {method} = req;
@@ -31,9 +22,20 @@ async function handler(req,res){
         }      
     }
     if (method === "GET"){
+      const url = new URL(req.url);
+      const id = url.searchParams.get("id")
+      if(id){
+        try {
+            const product = await Product.findOne({_id:id})
+            const productData = JSON.stringify(product)
+            return new NextResponse(productData, {status: 200})
+        } catch (error) {
+            return new NextResponse('No Product with That ID', {status: 404})
+        }
+      }
       const products = await  Product.find()
       const allProducts = JSON.stringify(products)
-      console.log(allProducts)
+      // console.log(allProducts)
       return new NextResponse(allProducts, {status: 200})
     }
     
