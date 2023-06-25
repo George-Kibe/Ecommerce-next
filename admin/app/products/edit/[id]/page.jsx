@@ -1,13 +1,11 @@
 "use client"
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import ProductForm from '@/components/ProductForm';
 
 const EditProductData = ({params}) => {
-  const [ProductData, setProductData] = useState(null)
+  const [productData, setProductData] = useState(null)
   const {id} = params;
   const getProduct = async() => {
     try {
@@ -23,8 +21,13 @@ const EditProductData = ({params}) => {
     getProduct()
   }, [id])  
 
+  if (!productData){
+    return(
+      <p className="text-center">Loading</p>
+    )
+  } 
   return (
-    <ProductForm {...ProductData} />
+    <ProductForm {...productData} />
   )
 }
 

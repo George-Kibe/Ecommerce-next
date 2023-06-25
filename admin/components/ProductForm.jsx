@@ -1,16 +1,17 @@
 "use client"
 import axios from 'axios'
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const ProductForm = ({title:existingTitle, description:existingDescription, price:existingPrice}) => {
-  console.log(existingTitle, existingDescription, existingPrice)
-  const [title, setTitle] = useState(existingTitle | "")
-  const [description, setDescription] = useState(existingDescription | '')
-  const [price, setPrice] = useState(existingPrice | '')
+const ProductForm = ({_id:id, title:existingTitle, description:existingDescription, price:existingPrice}) => {
+  console.log("ID: ", id)
+  const [title, setTitle] = useState(existingTitle || "")
+  const [description, setDescription] = useState(existingDescription || '')
+  const [price, setPrice] = useState(existingPrice || '')
   const router = useRouter();
+  const pathname = usePathname()
 
   const saveProduct = async(e) => {
     e.preventDefault()
@@ -18,16 +19,37 @@ const ProductForm = ({title:existingTitle, description:existingDescription, pric
       toast.error("You have missing details!");
       return
     }
-    toast.info("Adding your Product to Database")
     const data = {title, description, price}
-    const response = await axios.post("/api/products/", data)
-    console.log(response)
-    if(response.status === 201){
-        toast.success("Product added successfully to database")
-        setTimeout(router.push("/products"), 8000); 
+    if(id){
+      toast.info("Editing your Product in the Database")
+      try {
+        const response = await axios.put("/api/products/", {...data, _id:id})
+        console.log(response)
+        if(response.status === 200){
+            toast.success("Product added successfully to database")
+            setTimeout(router.push("/products"), 8000); 
+            
+        }else{
+            toast.error("Product not Edited. Try again!")
+        }
+      } catch (error) {
         
+      }
     }else{
-        toast.error("Product not added to database. Try again!")
+      toast.info("Adding your Product to Database")
+      try {
+        const response = await axios.post("/api/products/", data)
+        console.log(response)
+        if(response.status === 201){
+            toast.success("Product added successfully to database")
+            setTimeout(router.push("/products"), 8000); 
+            
+        }else{
+            toast.error("Product not added to database. Try again!")
+        }
+      } catch (error) {
+        
+      }
     }
   }
   
@@ -35,12 +57,12 @@ const ProductForm = ({title:existingTitle, description:existingDescription, pric
     <div className="w-full h-full">
       <ToastContainer />
       <form onSubmit={saveProduct} className="text-blue-900 flex flex-col p-4">
-        <h1 className="mb-2 text-xl">New Product</h1>
+        <h1 className="mb-2 text-xl">{pathname.includes("edit")?"Edit Product": "New Product"}</h1>
         <label>Product Name</label>
         <input type="text" placeholder='Product name' 
             value={title}
             onChange={ev => setTitle(ev.target.value)}
-            className="border-2 border-gray-300 rounded-md px-1 self-start mb-2 focus:border-blue-900" />
+            className="border-2 border-gray-300 rounded-md px-1 w-full mb-2 focus:border-blue-900" />
         <label>Product Description</label>
         <textarea name="" id="" cols="30" rows="5" 
             value={description}

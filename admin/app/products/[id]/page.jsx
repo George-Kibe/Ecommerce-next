@@ -9,7 +9,9 @@ const ViewProductInformation = () => {
   console.log("ID:", id)
 
   return (
-    <div>ViewProductInformation</div>
+    <div>
+      ViewProductInformation
+    </div>
   )
 }
 
