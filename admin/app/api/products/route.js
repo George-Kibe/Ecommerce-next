@@ -26,9 +26,9 @@ async function handler(req,res){
     
     if (method === "POST"){
         const body = await req.json()
-        const {title, description, price} = body;
+        const {title, description, images, price} = body;
         const newProduct = new Product({
-            title, description, price:parseInt(price)
+            title, description, images,price:parseInt(price)
         })
         try {
             await newProduct.save();
@@ -41,29 +41,16 @@ async function handler(req,res){
     }
     if (method === "PUT"){
         const body = await req.json()
-        const {title, description, price, _id} = body;
+        const {title, description, images, price, _id} = body;
         try {
-            await Product.updateOne({_id}, {title, description, price:parseInt(price)})
+            await Product.updateOne({_id}, {title, description,images, price:parseInt(price)})
             console.log("Updated!")
             return new NextResponse("Product has been Updated", {status: 200})
         } catch (error) {
             console.log("Product saving error!")
             return new NextResponse(error.message, {status: 422})
         }      
-    }
-    if (method === "DELETE"){
-        const body = await req.json()
-        const {title, description, price, _id} = body;
-        try {
-            await Product.updateOne({_id}, {title, description, price:parseInt(price)})
-            console.log("Updated!")
-            return new NextResponse("Product has been Updated", {status: 200})
-        } catch (error) {
-            console.log("Product saving error!")
-            return new NextResponse(error.message, {status: 422})
-        }      
-    }
-     
+    }     
 }
 
-export { handler as GET, handler as POST, handler as PUT, handler as DELETE };
+export { handler as GET, handler as POST, handler as PUT };

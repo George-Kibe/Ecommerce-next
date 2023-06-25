@@ -5,13 +5,16 @@ import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Image from "next/image"
+// continue from 2:47:51 Adding  and editomg with images
 
-const ProductForm = ({_id:id, title:existingTitle, description:existingDescription, price:existingPrice}) => {
+const ProductForm = ({_id:id, title:existingTitle, description:existingDescription, 
+  price:existingPrice, images:existingImages}) => {
   // console.log("ID: ", id)
   const [title, setTitle] = useState(existingTitle || "")
   const [description, setDescription] = useState(existingDescription || '')
   const [price, setPrice] = useState(existingPrice || '')
-  const [images, setImages] = useState([])
+  const [images, setImages] = useState(existingImages ||[])
 
   const router = useRouter();
   const pathname = usePathname()
@@ -22,7 +25,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
       toast.error("You have no image(s)")
       return
     }
-    toast.info("Uplading your Image(s)")
+    toast.info("Uploading your Image(s)")
     for (let i = 0; i < files.length; i++) {
       try {
         const parts = files[i].name.split(".")
@@ -36,6 +39,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         uploadedFiles.push(uploadUrl)
       } catch (error) {
         toast.error("Error Uploading one of the Images")
+        return
       }      
     }
     // console.log("Uploaded Files: ",uploadedFiles)
@@ -47,11 +51,11 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
   console.log("All images:", images)
   const saveProduct = async(e) => {
     e.preventDefault()
-    if(!title| !description |!price){
+    if(!title| !description |!price |!images.length){
       toast.error("You have missing details!");
       return
     }
-    const data = {title, description, price}
+    const data = {title, description, price, images}
     if(id){
       toast.info("Editing your Product in the Database")
       try {
@@ -103,20 +107,27 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
             className="border-2 border-gray-300 rounded-md px-1 w-full mb-2 focus:border-blue-900">
         </textarea>
         <label >Photos</label>
-        <div className="mb-2">
-          <label className="w-24 h-24 cursor-pointer bg-gray-200 rounded-lg text-center flex flex-col items-center justify-center">
+        <div className="mb-2 flex flex-wrap gap-2">
+          {
+            images.length > 0 && images.map(image => (
+              <div className="w-48 h-48 relative" key={image}>
+                <Image src={image} fill alt={image} className='rounded-md object-cover' />
+              </div>
+            ) )           
+          }
+          <label className="w-48 h-48 cursor-pointer bg-gray-200 rounded-lg text-center flex flex-col items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
             </svg>
             Upload
             <input type="file" multiple onChange={uploadImages} className='hidden' />
           </label>
-          {
-            !images?.length && (
-              <div className="">No Images in This Product</div>
-            )
-          }
         </div>
+        {
+          !images?.length && (
+            <div className="">No Images for This Product</div>
+          )
+        }
         <label>Price (in Kshs)</label>
         <input type="text" placeholder='Price' 
             value={price}
