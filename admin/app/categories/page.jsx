@@ -5,30 +5,25 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { withSwal } from 'react-sweetalert2';
 import Modal from '@/components/DeleteModal';
 
-const Categories = ({swal}) => {
+const Categories = () => {
   const [name, setName] = useState("")
   const [parentCategory, setParentCategory] = useState("")
   const [categories, setCategories] = useState([])
   const [editingCategory, setEditingCategory] = useState(null)
   const [isOpen, setIsOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null)
-
+  const [properties, setProperties] = useState([])
   const initiateDelete = (category) => {
     // console.log(category)
     setCategoryToDelete(category)
     setIsOpen(true);
   }
-  const closeModal = () => {
-    setIsOpen(false);
-  };
 
   const getCategories = async() => {
     try {
       const response = await axios.get("/api/categories")
-      // console.log(response.data)
       setCategories(response.data)
     } catch (error) {
       console.log(error)
@@ -72,34 +67,53 @@ const Categories = ({swal}) => {
     setName(category.name)
     category.parentCategory && setParentCategory(category.parentCategory._id)  
   }
+  const addProperty = () => {
+    setProperties(prev => {
+      return [...prev, {name:"", values:""}]
+    })
+  }
 
   return (
     <div className='w-full h-full text-blue-900 px-4'>
         <ToastContainer />
         <div>
-          <Modal setIsOpen={setIsOpen} categoryToDelete={categoryToDelete} isOpen={isOpen} onClose={closeModal} 
-            toast={toast} getCategories={getCategories}
+          <Modal setIsOpen={setIsOpen} categoryToDelete={categoryToDelete} isOpen={isOpen} 
+           toast={toast} getCategories={getCategories}
           />
         </div>
         <h1 className="mb-2 font-semibold text-xl">All Categories</h1>
         <label>
           { editingCategory? `Edit Category -${editingCategory.name}` : "Add a new Category"}
         </label>
-        <form onSubmit={saveCategory} className="flex gap-1">
-          <input type="text" placeholder='Category Name' 
-            value={name}
-            onChange={ev => setName(ev.target.value)}
-            className="border-2 border-gray-300 rounded-md px-1 w-full focus:border-blue-900" />
-            <select value={parentCategory} onChange={ev => setParentCategory(ev.target.value)}
-             className='border-2 border-gray-300 rounded-md px-1 w-full focus:border-blue-900"'>
-              <option value="">No Parent Category</option>
-              {
-                categories.length > 0 && categories.map((category, index) => (
+        <form onSubmit={saveCategory} className="flex flex-col gap-2">
+          <div className="flex flex-row gap-2">
+            <input type="text" placeholder='Category Name' 
+              value={name}
+              onChange={ev => setName(ev.target.value)}
+              className="border-2 border-gray-300 mb-2 rounded-md p-1 focus:border-blue-900" />
+              <select value={parentCategory} onChange={ev => setParentCategory(ev.target.value)}
+              className='border-2 border-gray-300 rounded-md mb-2 p-1 focus:border-blue-900"'>
+                <option value="">No Parent Category</option>
+                {
+                  categories.length > 0 && categories.map((category, index) => (
                   <option value={category._id} key={index}>{category.name}</option>
                 ))
               }
             </select>
-            <button type='sumbit' className="p-2 px-4 bg-blue-900 text-white rounded-md">Save</button>
+          </div>
+            <div className="mb-2">
+              <label className='block mb-2 font-semibold'>Properties</label>
+              <button onClick={addProperty} type="button" className="block bg-gray-600 p-2 rounded-md text-white text-sm">Add new Property</button>
+              {
+                properties.length > 0 && properties.map((property, index) => (
+                  <div className="flex gap-1" key={index}>
+                    <input type="text" value={property.name} placeholder='property name eg. Color' className="border p-1 m-1" />
+                    <input type="text" value={property.values} placeholder='values, comma separated' className="border p-1 m-1" />
+                  </div>
+                ))
+              }
+            </div>     
+            <button type='sumbit' className="self-start p-2 px-4 bg-blue-900 text-white rounded-md">Save</button>
         </form>
         <table className="border border-gray-300 p-2 w-full mt-4">
         <thead className="bg-blue-100 p-2">
@@ -119,7 +133,7 @@ const Categories = ({swal}) => {
                 <td className="border p-1">{category.name}</td>
                 <td className="border p-1">{category.parentCategory?.name || ""}</td>
                 <td className="border p-1">・{moment(category.createdAt).calendar()}</td>
-                <td className="border flex flex-row p-2">
+                <td className="border flex flex-row">
                   <button onClick={() => editCategory(category)}
                     className='bg-blue-900 p-2 mr-2 flex flex-row gap-1 text-white rounded-xl'>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">

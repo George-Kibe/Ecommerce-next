@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+// continue from $:24:00 
 
 export default function Home() {
   const session = useSession();

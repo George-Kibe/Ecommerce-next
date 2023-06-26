@@ -3,7 +3,6 @@ import axios from 'axios';
 import React from 'react';
 
 const Modal = ({ isOpen, categoryToDelete:category, setIsOpen, getCategories, toast }) => {
-  // const [isClosing, setIsClosing] = useState(false);
   const cancelDelete = () => {
     setTimeout(() => {
         setIsOpen(false);
@@ -13,7 +12,7 @@ const Modal = ({ isOpen, categoryToDelete:category, setIsOpen, getCategories, to
     setIsOpen(false)
     try {
         const response = await axios.delete(`/api/categories/${category._id}`)
-        // console.log(response)
+        console.log(response)
         toast.success("Category Deleted successfully")
         getCategories()
         

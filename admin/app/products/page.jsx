@@ -63,7 +63,7 @@ const AllProducts = () => {
                 <td className="border p-1">{index+1+(currentPage-1)*5}</td>
                 <td className="border p-1">{product.title}</td>
                 <td className="border p-1">{product.price}</td>
-                <td className="border p-1 flex-wrap">{product.description}</td>
+                <td className="border p-1 flex-wrap">{product.description.length > 100? product.description.substring(0,100) +" ..." : product.description}</td>
                 {/* <td className="border p-1">{moment(product.createdAt).format('YYYY-MM-DD')}</td> */}
                 <td className="border p-1">・{moment(product.createdAt).calendar()}</td>
                 <td className="border flex flex-row p-2">

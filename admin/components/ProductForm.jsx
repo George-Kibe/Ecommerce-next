@@ -2,7 +2,7 @@
 import uploadImageToS3 from '@/lib/uploadImageToS3';
 import axios from 'axios'
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image"
@@ -12,13 +12,27 @@ import { ReactSortable } from 'react-sortablejs';
 // continue from 2:47:51 Adding  and editomg with images
 
 const ProductForm = ({_id:id, title:existingTitle, description:existingDescription, 
-  price:existingPrice, images:existingImages}) => {
+  price:existingPrice, images:existingImages, category:existingCategory}) => {
   // console.log("ID: ", id)
   const [title, setTitle] = useState(existingTitle || "")
   const [description, setDescription] = useState(existingDescription || '')
   const [price, setPrice] = useState(existingPrice || '')
   const [images, setImages] = useState(existingImages ||[])
   const [isUploading, setIsUploading] = useState(false)
+  const [categories, setCategories] = useState([])
+  const [category, setCategory] = useState(existingCategory|| "")
+
+  const getCategories = async() => {
+    try {
+      const response = await axios.get("/api/categories")
+      setCategories(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getCategories()
+  }, [])
 
   const router = useRouter();
   const pathname = usePathname()
@@ -59,18 +73,18 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
   console.log("All images:", images)
   const saveProduct = async(e) => {
     e.preventDefault()
-    if(!title| !description |!price |!images.length){
+    if(!title| !description |!price |!images.length |!category){
       toast.error("You have missing details!");
       return
     }
-    const data = {title, description, price, images}
+    const data = {title, description, price, images, category}
     if(id){
       toast.info("Editing your Product in the Database")
       try {
         const response = await axios.put("/api/products/", {...data, _id:id})
         console.log(response)
         if(response.status === 200){
-            toast.success("Product added successfully to database")
+            toast.success("Product edited successfully")
             setTimeout(router.push("/products"), 8000); 
             
         }else{
@@ -111,7 +125,17 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         <input type="text" placeholder='Product name' 
             value={title}
             onChange={ev => setTitle(ev.target.value)}
-            className="border-2 border-gray-300 rounded-md px-1 w-full mb-2 focus:border-blue-900" />
+            className="border-2 border-gray-300 rounded-md px-1 w-full mb-2 focus:border-blue-900  md:w-1/2 xl:w-1/3 " />
+        <label>Product Category</label>
+        <select value={category} onChange={ev => setCategory(ev.target.value)}
+          className='border-2 border-gray-300 mb-2 md:w-1/2 xl:w-1/3 rounded-md px-1 w-full focus:border-blue-900"'>
+          <option value="">Not Categorized</option>
+          {
+            categories.length > 0 && categories.map((category, index) => (
+              <option value={category._id} key={index}>{category.name}</option>
+            ))
+          }
+        </select>
         <label>Product Description</label>
         <textarea name="" id="" cols="30" rows="5" 
             value={description}
@@ -148,7 +172,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
           )
         }
         <label>Price (in Kshs)</label>
-        <input type="text" placeholder='Price' 
+        <input type="number" placeholder='Price' 
             value={price}
             onChange={ev => setPrice(ev.target.value)}
             className="border-2 border-gray-300 rounded-md px-1 self-start mb-2 focus:border-blue-900" />

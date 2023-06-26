@@ -1,6 +1,7 @@
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import connect from "@/lib/db";
+// continue from 4:25:00
 
 async function handler(req,res){
     const {method} = req;
@@ -26,9 +27,9 @@ async function handler(req,res){
     
     if (method === "POST"){
         const body = await req.json()
-        const {title, description, images, price} = body;
+        const {title, description, category, images, price} = body;
         const newProduct = new Product({
-            title, description, images,price:parseInt(price)
+            title, description, category, images, price:parseInt(price)
         })
         try {
             await newProduct.save();
@@ -41,9 +42,9 @@ async function handler(req,res){
     }
     if (method === "PUT"){
         const body = await req.json()
-        const {title, description, images, price, _id} = body;
+        const {title, description, category, images, price, _id} = body;
         try {
-            await Product.updateOne({_id}, {title, description,images, price:parseInt(price)})
+            await Product.updateOne({_id}, {title, description, category, images, price:parseInt(price)})
             console.log("Updated!")
             return new NextResponse("Product has been Updated", {status: 200})
         } catch (error) {
