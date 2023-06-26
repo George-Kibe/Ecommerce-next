@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image"
 import { FadeLoader } from 'react-spinners';
 import { ReactSortable } from 'react-sortablejs';
+
 // continue from 2:47:51 Adding  and editomg with images
 
 const ProductForm = ({_id:id, title:existingTitle, description:existingDescription, 

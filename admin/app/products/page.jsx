@@ -59,7 +59,7 @@ const AllProducts = () => {
         <tbody className="border p-1">
           {
             currentProducts.map((product, index) => (
-              <tr className="border p-1">
+              <tr className="border p-1" key={product._id}>
                 <td className="border p-1">{index+1+(currentPage-1)*5}</td>
                 <td className="border p-1">{product.title}</td>
                 <td className="border p-1">{product.price}</td>
