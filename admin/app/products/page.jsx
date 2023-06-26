@@ -60,7 +60,7 @@ const AllProducts = () => {
           {
             currentProducts.map((product, index) => (
               <tr className="border p-1">
-                <td className="border p-1">{index+1}</td>
+                <td className="border p-1">{index+1+(currentPage-1)*5}</td>
                 <td className="border p-1">{product.title}</td>
                 <td className="border p-1">{product.price}</td>
                 <td className="border p-1 flex-wrap">{product.description}</td>

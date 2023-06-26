@@ -6,6 +6,8 @@ import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image"
+import { FadeLoader } from 'react-spinners';
+import { ReactSortable } from 'react-sortablejs';
 // continue from 2:47:51 Adding  and editomg with images
 
 const ProductForm = ({_id:id, title:existingTitle, description:existingDescription, 
@@ -15,6 +17,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
   const [description, setDescription] = useState(existingDescription || '')
   const [price, setPrice] = useState(existingPrice || '')
   const [images, setImages] = useState(existingImages ||[])
+  const [isUploading, setIsUploading] = useState(false)
 
   const router = useRouter();
   const pathname = usePathname()
@@ -25,6 +28,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
       toast.error("You have no image(s)")
       return
     }
+    setIsUploading(true)
     toast.info("Uploading your Image(s)")
     for (let i = 0; i < files.length; i++) {
       try {
@@ -32,6 +36,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         const ext = parts[parts.length-1];
         if(ext !=="png" && ext!=="jpg" && ext !=="jpeg"){
           toast.error(`Error Uploading ${ext} Images format. Not recognized.`)
+          setIsUploading(false)
           return
         }
         const uploadUrl = await uploadImageToS3(files[i], ext);
@@ -39,6 +44,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         uploadedFiles.push(uploadUrl)
       } catch (error) {
         toast.error("Error Uploading one of the Images")
+        setIsUploading(false)
         return
       }      
     }
@@ -47,6 +53,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
       return prev? [...prev, ...uploadedFiles] : [...uploadedFiles]
     }); 
     toast.success("Image(s) uploaded successfully")
+    setIsUploading(false)
   }
   console.log("All images:", images)
   const saveProduct = async(e) => {
@@ -88,6 +95,11 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
       }
     }
   }
+  const updateImagesOrder = (images) => {
+    const imagesObject = JSON.stringify(images);
+    console.log("Images: ", typeof images[0], Object.keys(images[0]))
+    setImages(images)
+  }
   
   return (
     <div className="w-full h-full">
@@ -108,12 +120,18 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         </textarea>
         <label >Photos</label>
         <div className="mb-2 flex flex-wrap gap-2">
+          {/* <ReactSortable className='flex flex-wrap gap-2' list={images} setList={updateImagesOrder}>         
+            
+          </ReactSortable> */}
           {
-            images.length > 0 && images.map(image => (
-              <div className="w-48 h-48 relative" key={image}>
-                <Image src={image} fill alt={image} className='rounded-md object-cover' />
-              </div>
-            ) )           
+              images.length > 0 && images.map(image => (
+                <div className="w-48 h-48 relative" key={image}>
+                  <Image src={image} fill alt={image} className='rounded-md object-cover' />
+                </div>
+              ) )           
+            }
+          {
+            isUploading && <div className="h-48 w-32 flex items-center justify-center border-2 rounded-lg"><FadeLoader /></div>
           }
           <label className="w-48 h-48 cursor-pointer bg-gray-200 rounded-lg text-center flex flex-col items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
