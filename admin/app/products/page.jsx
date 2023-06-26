@@ -1,4 +1,5 @@
 "use client"
+import Pagination from '@/components/Pagination'
 import axios from 'axios'
 import moment from 'moment'
 import Link from 'next/link'
@@ -8,6 +9,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const AllProducts = () => {
   const [products, setProducts] = useState([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Number of items to display per page
+  // Get current items based on the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = products.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const paginate = pageNumber => setCurrentPage(pageNumber);
   const getProducts = async() => {
     try {
       const response = await axios.get('/api/products')
@@ -48,7 +58,7 @@ const AllProducts = () => {
         </thead>
         <tbody className="border p-1">
           {
-            products.map((product, index) => (
+            currentProducts.map((product, index) => (
               <tr className="border p-1">
                 <td className="border p-1">{index+1}</td>
                 <td className="border p-1">{product.title}</td>
@@ -74,7 +84,15 @@ const AllProducts = () => {
             ))
           }
         </tbody>
-      </table>      
+      </table> 
+      <div className="w-full flex flex-col items-center">
+        <Pagination 
+          itemsPerPage={itemsPerPage}
+          totalItems={products.length}
+          paginate={paginate}
+          currentPage={currentPage}
+        />  
+      </div>       
     </div>   
   )
 }
