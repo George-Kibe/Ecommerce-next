@@ -116,7 +116,7 @@ const Categories = () => {
   }
 
   return (
-    <div className='w-full h-full text-blue-900 px-4'>
+    <div className='w-full h-full text-blue-900 py-4'>
         <ToastContainer />
         <div>
           <Modal setIsOpen={setIsOpen} categoryToDelete={categoryToDelete} isOpen={isOpen} 

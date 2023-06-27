@@ -90,7 +90,7 @@ const Pagination = ({ itemsPerPage, totalItems, currentPage, paginate }) => {
     paginate(currentPage - 1)
   }
   return (
-    <ul className="pagination">
+    <div className="w-full -h-full px-2">
       <li className={`page-item`}>
         {
           currentPage !== 1 && (
@@ -117,7 +117,7 @@ const Pagination = ({ itemsPerPage, totalItems, currentPage, paginate }) => {
           )
         }        
       </li>
-    </ul>
+    </div>
   );
 };
 
@@ -149,7 +149,7 @@ const Settings = () => {
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
   return (
-    <div>
+    <div className='w-full h-full p-2'>
       {/* Display your items */}
       {currentItems.map(item => (
         <div key={item._id}>{item.title}</div>

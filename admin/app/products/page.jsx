@@ -32,7 +32,7 @@ const AllProducts = () => {
   }, [])
   
   return (
-    <div className="p-4">
+    <div className="w-full h-full p-2">
       <ToastContainer />
       <div className="">
         <Link href={"/products/new"} className='bg-blue-900 text-white p-2 rounded-xl'>Add New Product</Link>
