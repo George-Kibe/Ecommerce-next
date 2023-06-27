@@ -70,7 +70,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
     toast.success("Image(s) uploaded successfully")
     setIsUploading(false)
   }
-  console.log("All images:", images)
+  
   const saveProduct = async(e) => {
     e.preventDefault()
     if(!title| !description |!price |!images.length |!category){
@@ -111,8 +111,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
     }
   }
   const updateImagesOrder = (images) => {
-    const imagesObject = JSON.stringify(images);
-    console.log("Images: ", typeof images[0], Object.keys(images[0]))
+    console.log(images)
     setImages(images)
   }
   
@@ -145,10 +144,16 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         </textarea>
         <label >Photos</label>
         <div className="mb-2 flex flex-wrap gap-2">
-          {/* <ReactSortable className='flex flex-wrap gap-2' list={images} setList={updateImagesOrder}>         
-            
-          </ReactSortable> */}
-          {
+          {/* <ReactSortable className='flex flex-wrap gap-2' list={images} setList={updateImagesOrder}>          */}
+            {
+              images.length > 0 && images.map(image => (
+                <div className="w-48 h-48 relative" key={image}>
+                  <Image src={image} fill alt={image} className='rounded-md object-cover' />
+                </div>
+              ) )           
+            }
+          {/* </ReactSortable> */}
+            {
               images.length > 0 && images.map(image => (
                 <div className="w-48 h-48 relative" key={image}>
                   <Image src={image} fill alt={image} className='rounded-md object-cover' />
