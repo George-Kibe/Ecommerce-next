@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
             </button>
             {children}
           </div>
-          <Footer/>
+          {/* <Footer/> */}
         </div>  
         </AuthProvider>
       </body>

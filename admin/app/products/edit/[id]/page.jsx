@@ -23,7 +23,9 @@ const EditProductData = ({params}) => {
 
   if (!productData){
     return(
-      <p className="text-center">Loading</p>
+      <div className="w-full h-full px-2 p-4">
+        <p className="text-center">Loading...</p>  
+      </div>      
     )
   } 
   return (

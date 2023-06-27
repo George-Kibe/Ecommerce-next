@@ -64,6 +64,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
     }
     // console.log("Uploaded Files: ",uploadedFiles)
     setImages(prev => {
+      console.log(prev)
       return prev? [...prev, ...uploadedFiles] : [...uploadedFiles]
     }); 
     toast.success("Image(s) uploaded successfully")
@@ -89,7 +90,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
       toast.info("Editing your Product in the Database")
       try {
         const response = await axios.put("/api/products/", {...data, _id:id})
-        console.log(response)
+        // console.log(response)
         if(response.status === 200){
             toast.success("Product edited successfully")
             setTimeout(router.push("/products"), 8000); 
@@ -117,10 +118,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
       }
     }
   }
-  const updateImagesOrder = (images) => {
-    console.log(images)
-    setImages(images)
-  }
+
   const propertiesToFill = []
   if(categories.length > 0 && category){
     let catInfo = categories.find(({_id}) => _id === category)
@@ -133,35 +131,35 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
   }
   
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full text-black">
       <ToastContainer />
-      <form onSubmit={saveProduct} className="text-blue-900 flex flex-col p-4">
+      <form onSubmit={saveProduct} className="flex flex-col p-4">
         <h1 className="mb-2 font-semibold text-xl">{pathname.includes("edit")?"Edit Product": "New Product"}</h1>
         <label>Product Name</label>
         <input type="text" placeholder='Product name' 
             value={title}
             onChange={ev => setTitle(ev.target.value)}
-            className="border-2 border-gray-300 rounded-md px-1 w-full mb-2 focus:border-blue-900  md:w-1/2 xl:w-1/3 " />
+            className="border-2 border-gray-300 rounded-md p-1 w-full mb-2 focus:border-blue-900  md:w-1/2 xl:w-1/3 " />
         <label>Product Category</label>
         <select value={category} onChange={ev => setCategory(ev.target.value)}
-          className='border-2 border-gray-300 mb-2 md:w-1/2 xl:w-1/3 rounded-md px-1 w-full focus:border-blue-900"'>
+          className='border-2 border-gray-300 mb-2 p-1 md:w-1/2 xl:w-1/3 rounded-md px-1 w-full focus:border-blue-900"'>
           <option value="">Not Categorized</option>
           {
             categories.length > 0 && categories.map((category, index) => (
-              <option value={category._id} key={index}>{category.name}</option>
+              <option className="p-1 bg-black text-white" value={category._id} key={index}>{category.name}</option>
             ))
           }
         </select>
         {
           propertiesToFill.length > 0 && propertiesToFill.map( (p, index) => (
             <div className="m-1 flex gap-1" key={index}>
-              <div className="">{p.name}</div>
+              <div className="bg-emerald-700 p-1 rounded-lg text-white mr-2">{p.name}</div>
               <select value ={productProperties[p.name]}
                 onChange={ev => editProductProperties(p.name, ev.target.value)}
               >
                 {
                   p.values && p.values.map((value, index) => (
-                    <option value={value} key={index} className="">{value}</option>
+                    <option value={value} key={index} className="p-1 m-1">{value}</option>
                   ))
                 }
               </select>
@@ -173,30 +171,23 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
             value={description}
             onChange={ev => setDescription(ev.target.value)}
             placeholder='Product Description'
-            className="border-2 border-gray-300 rounded-md px-1 w-full mb-2 focus:border-blue-900">
+            className="border-2 border-gray-300 rounded-md p-1 w-full mb-2 focus:border-blue-900">
         </textarea>
         <label >Photos</label>
         <div className="mb-2 flex flex-wrap gap-2">
           {/* <ReactSortable className='flex flex-wrap gap-2' list={images} setList={updateImagesOrder}>          */}
             {
               images.length > 0 && images.map(image => (
-                <div className="w-48 h-48 relative" key={image}>
+                <div className="w-48 h-48 border border-blue-900 rounded-lg relative" key={image}>
                   <Image src={image} fill alt={image} className='rounded-md object-cover' />
                 </div>
               ) )           
             }
           {/* </ReactSortable> */}
-            {
-              images.length > 0 && images.map(image => (
-                <div className="w-48 h-48 relative" key={image}>
-                  <Image src={image} fill alt={image} className='rounded-md object-cover' />
-                </div>
-              ) )           
-            }
           {
-            isUploading && <div className="h-48 w-32 flex items-center justify-center border-2 rounded-lg"><FadeLoader /></div>
+            isUploading && <div className="h-48 w-32 flex border-2 border-blue-900 items-center justify-center rounded-lg"><FadeLoader /></div>
           }
-          <label className="w-48 h-48 cursor-pointer bg-gray-200 rounded-lg text-center flex flex-col items-center justify-center">
+          <label className="w-48 h-48 cursor-pointer bg-gray-200 border-2 border-blue-900 rounded-lg text-center flex flex-col items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
             </svg>
@@ -213,7 +204,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         <input type="number" placeholder='Price' 
             value={price}
             onChange={ev => setPrice(ev.target.value)}
-            className="border-2 border-gray-300 rounded-md px-1 self-start mb-2 focus:border-blue-900" />
+            className="border-2 border-gray-300 rounded-md p-1 self-start mb-2 focus:border-blue-900" />
         <button type='submit' className='bg-blue-900 text-white p-2 rounded-xl self-start'>
           {pathname.includes("edit")?"Edit Product": "Add Product"}
         </button>

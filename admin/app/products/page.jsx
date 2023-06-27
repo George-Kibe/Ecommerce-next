@@ -32,7 +32,7 @@ const AllProducts = () => {
   }, [])
   
   return (
-    <div className="w-full h-full p-2">
+    <div className="w-full h-full p-4">
       <ToastContainer />
       <div className="">
         <Link href={"/products/new"} className='bg-blue-900 text-white p-2 rounded-xl'>Add New Product</Link>
@@ -45,27 +45,27 @@ const AllProducts = () => {
             </div>
           )
       }  
-      <table className="border border-gray-300 p-2 w-full mt-4">
+      <table className="border border-gray-400 p-2 w-full mt-4">
         <thead className="bg-blue-100 p-2">
-          <tr className="border">
-            <td className="border p-1">#</td>  
-            <td className="border p-1">Product Name</td>
-            <td className="border p-1">Product Price</td>
-            <td className="border p-1">Product Description</td>
-            <td className="border p-1">Created</td>
-            <td className="border p-1">Action</td>
+          <tr className="border border-gray-400">
+            <td className="border border-gray-400 p-1">#</td>  
+            <td className="border border-gray-400 p-1">Product Name</td>
+            <td className="border border-gray-400 p-1">Product Price</td>
+            <td className="border border-gray-400 p-1">Product Description</td>
+            <td className="border border-gray-400 p-1">Created</td>
+            <td className="border border-gray-400 p-1">Action</td>
           </tr>
         </thead>
-        <tbody className="border p-1">
+        <tbody className="border border-gray-400 p-1">
           {
             currentProducts.map((product, index) => (
-              <tr className="border p-1" key={product._id}>
-                <td className="border p-1">{index+1+(currentPage-1)*5}</td>
-                <td className="border p-1">{product.title}</td>
-                <td className="border p-1">{product.price}</td>
-                <td className="border p-1 flex-wrap">{product.description.length > 100? product.description.substring(0,100) +" ..." : product.description}</td>
-                {/* <td className="border p-1">{moment(product.createdAt).format('YYYY-MM-DD')}</td> */}
-                <td className="border p-1">・{moment(product.createdAt).calendar()}</td>
+              <tr className="border border-gray-400 p-1" key={product._id}>
+                <td className="border border-gray-400 p-1">{index+1+(currentPage-1)*5}</td>
+                <td className="border border-gray-400 p-1">{product.title}</td>
+                <td className="border border-gray-400 p-1">{product.price}</td>
+                <td className="border border-gray-400 p-1 flex-wrap">{product.description.length > 100? product.description.substring(0,100) +" ..." : product.description}</td>
+                {/* <td className="border border-gray-400 p-1">{moment(product.createdAt).format('YYYY-MM-DD')}</td> */}
+                <td className="border border-gray-400 p-1">・{moment(product.createdAt).calendar()}</td>
                 <td className="border flex flex-row p-2">
                   <Link href={`/products/edit/${product._id}`} className='bg-blue-900 p-2 mr-2 flex flex-row gap-1 text-white rounded-xl'>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
