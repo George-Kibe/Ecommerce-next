@@ -18,7 +18,7 @@ async function handler(req,res){
     if (method === "POST"){
         const body = await req.json()
         const {name, parentCategory, properties} = body;
-        console.log(name, parentCategory, properties)
+        console.log(body)
         try {
             if (parentCategory){
                 const newCategory = new Category({name, parentCategory, properties})
@@ -38,7 +38,7 @@ async function handler(req,res){
         const {_id, name, parentCategory, properties} = body;
         try {
             if (parentCategory){
-                await Category.updateOne({_id}, {name, parentCategory, properties})
+                const response = await Category.updateOne({_id:_id}, {name, parentCategory, properties})
                 return new NextResponse("Category has been Updated", {status: 200})
             }
             await Category.updateOne({_id}, {name, properties})

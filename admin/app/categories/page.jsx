@@ -55,6 +55,7 @@ const Categories = () => {
           setName(""); 
           setEditingCategory(""); 
           setProperties([]);
+          await getCategories();
           toast.success("Category Edited Successfully")
         }
         return
@@ -71,7 +72,7 @@ const Categories = () => {
         // console.log(response)
         if(response.status === 201){
           setName("");
-          getCategories();
+          await getCategories();
           setProperties([])
           toast.success("Category Added Successfully")
         }
@@ -81,11 +82,11 @@ const Categories = () => {
     }
   }
   const editCategory = (category) => {
-    console.log(category)
+    // console.log(category)
     setEditingCategory(category)
     setName(category.name)
     category.parentCategory && setParentCategory(category.parentCategory._id)  
-    setProperties(category.properties.map(({name, values}) => ({
+    category.properties.length > 0 && setProperties(category.properties.map(({name, values}) => ({
       name,
       values:values.join(",")
     })))
@@ -162,7 +163,7 @@ const Categories = () => {
             <div className="flex gap-2">
               {
                 editingCategory &&
-                  <button onClick={() => {setEditingCategory(null); setName(""); setParentCategory("")}}
+                  <button onClick={() => {setEditingCategory(null); setName(""); setProperties([]); setParentCategory("")}}
                    type="button" className="block bg-gray-600 p-2 rounded-md text-white text-sm">Cancel</button>
                 }
               <button type='sumbit' className="self-start p-2 px-4 bg-blue-900 text-white rounded-md">Save</button>

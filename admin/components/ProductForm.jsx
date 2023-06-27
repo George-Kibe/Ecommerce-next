@@ -9,13 +9,12 @@ import Image from "next/image"
 import { FadeLoader } from 'react-spinners';
 import { ReactSortable } from 'react-sortablejs';
 
-// continue from 2:47:51 Adding  and editomg with images
-
 const ProductForm = ({_id:id, title:existingTitle, description:existingDescription, 
-  price:existingPrice, images:existingImages, category:existingCategory}) => {
-  // console.log("ID: ", id)
+  price:existingPrice, images:existingImages, category:existingCategory, properties:existingProperties}) => {
+    
   const [title, setTitle] = useState(existingTitle || "")
   const [description, setDescription] = useState(existingDescription || '')
+  const [productProperties, setProductProperties] = useState(existingProperties || {})
   const [price, setPrice] = useState(existingPrice || '')
   const [images, setImages] = useState(existingImages ||[])
   const [isUploading, setIsUploading] = useState(false)
@@ -55,7 +54,7 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
           return
         }
         const uploadUrl = await uploadImageToS3(files[i], ext);
-        console.log('Image URL:', uploadUrl);
+        // console.log('Image URL:', uploadUrl);
         uploadedFiles.push(uploadUrl)
       } catch (error) {
         toast.error("Error Uploading one of the Images")
@@ -71,13 +70,21 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
     setIsUploading(false)
   }
   
+  const editProductProperties = (propName, value) => {
+    setProductProperties(prev => {
+      const newProductProps = {...prev};
+      newProductProps[propName] = value;
+      return newProductProps
+    })
+  }
+
   const saveProduct = async(e) => {
     e.preventDefault()
     if(!title| !description |!price |!images.length |!category){
       toast.error("You have missing details!");
       return
     }
-    const data = {title, description, price, images, category}
+    const data = {title, description, price, images, category, properties:productProperties}
     if(id){
       toast.info("Editing your Product in the Database")
       try {
@@ -114,6 +121,16 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
     console.log(images)
     setImages(images)
   }
+  const propertiesToFill = []
+  if(categories.length > 0 && category){
+    let catInfo = categories.find(({_id}) => _id === category)
+    propertiesToFill.push(...catInfo.properties)
+    while(catInfo?.parentCategory?._id){
+      const parentCat = categories.find(({_id}) => _id= catInfo.parentCategory._id)
+      propertiesToFill.push(...parentCat.properties);
+      catInfo=parentCat
+    }     
+  }
   
   return (
     <div className="w-full h-full">
@@ -135,6 +152,22 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
             ))
           }
         </select>
+        {
+          propertiesToFill.length > 0 && propertiesToFill.map( (p, index) => (
+            <div className="m-1 flex gap-1" key={index}>
+              <div className="">{p.name}</div>
+              <select value ={productProperties[p.name]}
+                onChange={ev => editProductProperties(p.name, ev.target.value)}
+              >
+                {
+                  p.values && p.values.map((value, index) => (
+                    <option value={value} key={index} className="">{value}</option>
+                  ))
+                }
+              </select>
+            </div>
+          ))
+        }
         <label>Product Description</label>
         <textarea name="" id="" cols="30" rows="5" 
             value={description}
