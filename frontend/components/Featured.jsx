@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import ButtonLink from "@/components/ButtonLink";
 import CartIcon from "@/components/icons/CartIcon";
 import {useContext} from "react";
-import {CartContext} from "@/components/CartContext";
+import {CartContext} from "@/context/CartContext";
 import Image from "next/image";
 
 const Bg = styled.div`
@@ -61,7 +61,6 @@ const ButtonsWrapper = styled.div`
 `;
 
 export default function Featured({product}) {
-  console.log("Product: ", product.title)
   const {addProduct} = useContext(CartContext);
   function addFeaturedToCart() {
     addProduct(product._id);
@@ -84,7 +83,7 @@ export default function Featured({product}) {
             </div>
           </Column>
           <Column className="relative h-[200px] md:h-full md:flex-1 rounded-md">
-            <Image fill src={product.images[2]} alt="Featured Product rounded-md"
+            <Image fill src={product.images[0]} alt="Featured Product rounded-md"
               className="object-contain "
             />
           </Column>

@@ -3,16 +3,18 @@ import Button from "@/components/Button";
 import CartIcon from "@/components/icons/CartIcon";
 import Link from "next/link";
 import {useContext} from "react";
-import {CartContext} from "@/components/CartContext";
+import {CartContext} from "@/context/CartContext";
 
 const ProductWrapper = styled.div`
-  
+  background-color: whitesmoke;
+  padding: 10px;
+  border-radius: 5px;
 `;
 
 const WhiteBox = styled(Link)`
-  background-color: #fff;
-  padding: 20px;
-  height: 120px;
+  background-color: transparent;
+  padding: 10px;
+  height: 160px;
   text-align: center;
   display: flex;
   align-items: center;
@@ -20,7 +22,8 @@ const WhiteBox = styled(Link)`
   border-radius: 10px;
   img{
     max-width: 100%;
-    max-height: 80px;
+    max-height: 160px;
+    border-radius: 10px;
   }
 `;
 
@@ -48,11 +51,11 @@ const PriceRow = styled.div`
 `;
 
 const Price = styled.div`
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight:400;
   text-align: right;
   @media screen and (min-width: 768px) {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight:600;
     text-align: left;
   }
@@ -65,7 +68,7 @@ export default function ProductBox({_id,title,price,images}) {
     <ProductWrapper>
       <WhiteBox href={url}>
         <div>
-          <img src={images?.[0]} alt=""/>
+          <img src={images?.[0]} alt={title}/>
         </div>
       </WhiteBox>
       <ProductInfoBox>
@@ -74,8 +77,9 @@ export default function ProductBox({_id,title,price,images}) {
           <Price>
             Kshs.&nbsp;{price}
           </Price>
-          <Button block onClick={() => addProduct(_id)} primary outline>
-            Add to cart
+          <Button white onClick={() => addProduct(_id)} primary outline>
+            <CartIcon />
+            Add&nbsp;to&nbsp;cart
           </Button>
         </PriceRow>
       </ProductInfoBox>
