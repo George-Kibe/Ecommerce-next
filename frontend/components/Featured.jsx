@@ -6,6 +6,7 @@ import ButtonLink from "@/components/ButtonLink";
 import CartIcon from "@/components/icons/CartIcon";
 import {useContext} from "react";
 import {CartContext} from "@/components/CartContext";
+import Image from "next/image";
 
 const Bg = styled.div`
   background-color: #222;
@@ -44,12 +45,14 @@ const ColumnsWrapper = styled.div`
     }
     img{
       max-width: 100%;
+      max-height: 400px;
     }
   }
 `;
 const Column = styled.div`
   display: flex;
   align-items: center;
+  position: relative;
 `;
 const ButtonsWrapper = styled.div`
   display: flex;
@@ -57,12 +60,8 @@ const ButtonsWrapper = styled.div`
   margin-top:25px;
 `;
 
-export default function Featured({product:newProduct}) {
-  const product = {
-    "_id":"whwbhwfbh74948ufhbbfbfwfwe",
-    "title": "Lorem ipsum dolor sit amet consectetur",
-    "description":"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque inventore quisquam nisi laboriosam doloremque at accusantium, voluptas facilis voluptatum cupiditate."
-  }
+export default function Featured({product}) {
+  console.log("Product: ", product.title)
   const {addProduct} = useContext(CartContext);
   function addFeaturedToCart() {
     addProduct(product._id);
@@ -84,12 +83,13 @@ export default function Featured({product:newProduct}) {
               </ButtonsWrapper>
             </div>
           </Column>
-          <Column>
-            <img src="https://dawid-next-ecommerce.s3.amazonaws.com/1679151719649.png" alt=""/>
+          <Column className="relative h-[200px] md:h-full md:flex-1 rounded-md">
+            <Image fill src={product.images[2]} alt="Featured Product rounded-md"
+              className="object-contain "
+            />
           </Column>
         </ColumnsWrapper>
       </Center>
-
     </Bg>
   );
 }
