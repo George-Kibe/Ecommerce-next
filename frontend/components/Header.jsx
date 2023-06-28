@@ -68,7 +68,7 @@ export default function Header() {
   const [mobileNavActive,setMobileNavActive] = useState(false);
   return (
     <StyledHeader>
-      <Center>
+      <div className="px-4 md:px-8 lg:px-16">
         <Wrapper>
           <Logo href={'/'}>Ecommerce</Logo>
           <StyledNav mobilenavactive={mobileNavActive}>
@@ -84,7 +84,7 @@ export default function Header() {
             <BarsIcon />
           </NavButton>
         </Wrapper>
-      </Center>
+      </div>
     </StyledHeader>
   );
 }
