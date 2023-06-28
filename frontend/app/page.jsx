@@ -2,7 +2,6 @@ import Featured from '@/components/Featured'
 import NewProducts from '@/components/NewProducts'
 import connect from '@/lib/db'
 import Product from '@/models/Product'
-import Image from 'next/image'
 
 async function getFeaturedProductDetails(id) {
   await connect()
@@ -22,7 +21,7 @@ async function getLatestProducts() {
 export default async function Home() {
   const product = await getFeaturedProductDetails("6495b282df662ccaa8441082")
   const latestProducts = await getLatestProducts()
-  console.log(latestProducts)
+  // console.log(latestProducts)
   return (
     <main className="w-full h-full">
       <Featured product={product}/>

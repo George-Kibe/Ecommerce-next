@@ -1,9 +1,24 @@
-import React from 'react'
+import Center from "@/components/Center";
+import Product from "@/models/Product";
+import ProductsGrid from "@/components/ProductsGrid";
+import Title from "@/components/Title";
+import connect from "@/lib/db";
 
-const page = () => {
-  return (
-    <div>page</div>
-  )
+async function getAllProducts() {
+  await connect()
+  const response = await Product.find({}, null, {sort:{'_id':-1}});
+  const productsData = JSON.parse(JSON.stringify(response))
+  return productsData
 }
 
-export default page
+export default async function ProductsPage() {
+  const products = await getAllProducts()
+  return (
+    <>
+      <Center>
+        <Title>All products</Title>
+        <ProductsGrid products={products} />
+      </Center>
+    </>
+  );
+}

@@ -1,3 +1,4 @@
+"use client"
 import styled, {css} from "styled-components";
 import {primary} from "@/lib/colors";
 

@@ -17,7 +17,7 @@ const ErrorPage = () => {
         src="/error-image.png"
         alt="Error"
       /> */}
-      <button onclick={goBack} className="mt-8 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+      <button onClick={goBack} className="mt-8 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
         Go back
       </button>
     </div>

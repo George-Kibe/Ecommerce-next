@@ -65,7 +65,7 @@ const NavButton = styled.button`
 
 export default function Header() {
   const {cartProducts} = useContext(CartContext);
-  console.log(cartProducts)
+  // console.log(cartProducts)
   const [mobileNavActive,setMobileNavActive] = useState(false);
   return (
     <StyledHeader>

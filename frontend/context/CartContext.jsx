@@ -23,7 +23,6 @@ export function CartContextProvider({children}) {
     const existingProduct = cartProducts.find((p) => p._id === product._id)
     if(existingProduct){
       const newCartProducts = cartProducts.filter(p => p._id !== product._id)
-      console.log("Cart Products: ", newCartProducts)
       existingProduct["quantity"] = existingProduct.quantity+1
       setCartProducts([existingProduct, ...newCartProducts]);
       toast.success("Product already in cart. Quantity added by one")
@@ -35,8 +34,7 @@ export function CartContextProvider({children}) {
   }
   function removeQuantity(product) {
     const existingProduct = cartProducts.find((p) => p._id === product._id)
-    const newCartProducts = cartProducts.filter(p => p._id !== product._id)
-    console.log("Cart Products in Remove: ", newCartProducts)  
+    const newCartProducts = cartProducts.filter(p => p._id !== product._id) 
     existingProduct["quantity"] = existingProduct.quantity - 1
     setCartProducts([existingProduct,...newCartProducts]);
   }

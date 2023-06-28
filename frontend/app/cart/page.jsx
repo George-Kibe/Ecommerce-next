@@ -7,6 +7,7 @@ import {CartContext} from "@/context/CartContext";
 import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
+import DeleteIcon from "@/components/icons/DeleteIcon";
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -19,7 +20,7 @@ const ColumnsWrapper = styled.div`
 `;
 
 const Box = styled.div`
-  background-color: #fff;
+  background-color: whitesmoke;
   border-radius: 10px;
   padding: 30px;
 `;
@@ -53,6 +54,7 @@ const ProductImageBox = styled.div`
 `;
 
 const QuantityLabel = styled.span`
+  align-self:center;
   padding: 0 15px;
   display: block;
   @media screen and (min-width: 768px) {
@@ -75,8 +77,7 @@ export default function CartPage() {
   const [streetAddress,setStreetAddress] = useState('');
   const [country,setCountry] = useState('');
   const [isSuccess,setIsSuccess] = useState(false);
-
-  console.log(cartProducts)
+  // console.log(cartProducts)
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
@@ -106,11 +107,10 @@ export default function CartPage() {
       window.location = response.data.url;
     }
   }
-  let total = 0;
-  for (const productId of cartProducts) {
-    const price = cartProducts.find(p => p._id === productId)?.price || 0;
-    total += price;
-  }
+  const total = cartProducts.reduce(
+    (sum, cartProduct) => sum + cartProduct.price * cartProduct.quantity || 0,
+    0,
+  );
 
   if (isSuccess) {
     return (
@@ -155,16 +155,20 @@ export default function CartPage() {
                         {product.title}
                       </ProductInfoCell>
                       <td>
-                        <Button
-                          onClick={() => lessOfThisProduct(product)}>-</Button>
-                        <QuantityLabel>
-                          {product.quantity}
-                        </QuantityLabel>
-                        <Button
-                          onClick={() => moreOfThisProduct(product)}>+</Button>
+                        <div className="flex item-center">
+                          <button className="p-1 px-2 rounded-lg bg-blue-200"
+                            onClick={() => lessOfThisProduct(product)}>
+                              { product.quantity < 2 ? <DeleteIcon /> :"-" }
+                            </button>
+                          <QuantityLabel>
+                            {product.quantity}
+                          </QuantityLabel>
+                          <button className="p-1 px-2 rounded-lg bg-blue-200"
+                            onClick={() => moreOfThisProduct(product)}>+</button>
+                        </div>
                       </td>
                       <td>
-                        Kshs.&nbsp;{cartProducts.filter(p => p === product).length * product.price}
+                        Kshs.&nbsp;{product.quantity * product.price}
                       </td>
                     </tr>
                   ))}
