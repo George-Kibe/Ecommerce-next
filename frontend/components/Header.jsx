@@ -64,7 +64,8 @@ const NavButton = styled.button`
 `;
 
 export default function Header() {
-  // const {cartProducts} = useContext(CartContext);
+  const {cartProducts} = useContext(CartContext);
+  console.log(cartProducts)
   const [mobileNavActive,setMobileNavActive] = useState(false);
   return (
     <StyledHeader>
@@ -77,7 +78,7 @@ export default function Header() {
             <NavLink href={'/categories'}>Categories</NavLink>
             <NavLink href={'/account'}>Account</NavLink>
             <NavLink href={'/cart'}>Cart 
-            {/* ({cartProducts.length}) */}
+            ({cartProducts.length})
             </NavLink>
           </StyledNav>
           <NavButton onClick={() => setMobileNavActive(prev => !prev)}>

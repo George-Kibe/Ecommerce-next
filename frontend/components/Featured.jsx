@@ -7,6 +7,8 @@ import CartIcon from "@/components/icons/CartIcon";
 import {useContext} from "react";
 import {CartContext} from "@/context/CartContext";
 import Image from "next/image";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Bg = styled.div`
   background-color: #222;
@@ -63,7 +65,7 @@ const ButtonsWrapper = styled.div`
 export default function Featured({product}) {
   const {addProduct} = useContext(CartContext);
   function addFeaturedToCart() {
-    addProduct(product._id);
+    addProduct(product);
   }
   return (
     <Bg>
