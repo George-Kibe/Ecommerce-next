@@ -1,3 +1,4 @@
+"use client"
 import Center from "@/components/Center";
 import styled from "styled-components";
 import Button from "@/components/Button";
@@ -56,7 +57,12 @@ const ButtonsWrapper = styled.div`
   margin-top:25px;
 `;
 
-export default function Featured({product}) {
+export default function Featured({product:newProduct}) {
+  const product = {
+    "_id":"whwbhwfbh74948ufhbbfbfwfwe",
+    "title": "Lorem ipsum dolor sit amet consectetur",
+    "description":"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque inventore quisquam nisi laboriosam doloremque at accusantium, voluptas facilis voluptatum cupiditate."
+  }
   const {addProduct} = useContext(CartContext);
   function addFeaturedToCart() {
     addProduct(product._id);

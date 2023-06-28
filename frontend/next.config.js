@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+
+const nextConfig = {
+    images: {
+        domains: [
+            "lh3.googleusercontent.com",
+            "mernbnb-images-bucket.s3.eu-west-1.amazonaws.com",
+            "dawid-next-ecommerce.s3.amazonaws.com"
+        ]
+    }
+}
 
 module.exports = nextConfig

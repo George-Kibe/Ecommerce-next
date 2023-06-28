@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link";
 import styled from "styled-components";
 import Center from "@/components/Center";
@@ -63,19 +64,21 @@ const NavButton = styled.button`
 `;
 
 export default function Header() {
-  const {cartProducts} = useContext(CartContext);
+  // const {cartProducts} = useContext(CartContext);
   const [mobileNavActive,setMobileNavActive] = useState(false);
   return (
     <StyledHeader>
       <Center>
         <Wrapper>
           <Logo href={'/'}>Ecommerce</Logo>
-          <StyledNav mobileNavActive={mobileNavActive}>
+          <StyledNav mobilenavactive={mobileNavActive}>
             <NavLink href={'/'}>Home</NavLink>
             <NavLink href={'/products'}>All products</NavLink>
             <NavLink href={'/categories'}>Categories</NavLink>
             <NavLink href={'/account'}>Account</NavLink>
-            <NavLink href={'/cart'}>Cart ({cartProducts.length})</NavLink>
+            <NavLink href={'/cart'}>Cart 
+            {/* ({cartProducts.length}) */}
+            </NavLink>
           </StyledNav>
           <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
             <BarsIcon />
