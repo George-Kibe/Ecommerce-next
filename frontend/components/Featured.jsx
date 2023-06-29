@@ -16,10 +16,10 @@ export default function Featured({product}) {
   }
 
   return (
-    <div className='flex p-4 md:flex-row flex-col-reverse items-center justify-center'>
+    <div className='flex p-4 md:px-12 lg:px-24 md:flex-row flex-col-reverse items-center justify-center'>
       <div className="">
         <h1 className="text-semibold text-justify text-[24px] md:text-[30px] mb-2 md:mb-4">{product.title}</h1>
-        {product.description}
+        <p className="text-justify md:pr-8">{product.description}</p>
         <div className="flex mt-2 md:mt-4">
           <Link href={`/products/${product._id}`} 
             className='text-blue-700 hover:text-white border border-blue-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 dark:border-gray-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800'
@@ -30,8 +30,8 @@ export default function Featured({product}) {
           </button>
         </div>
       </div>
-      <div className="w-full h-full">
-        <div className="relative h-[200px] md:h-[500px] sm:h-[250px] sm:w-[600px] md:w-1/2 rounded-md">
+      <div className="w-full md:w-1/2 ">
+        <div className="relative h-[200px] sm:h-[250px] sm:w-[600px] md:h-[40vh] rounded-md">
           <Image fill src={product.images[0]} alt="Featured Product rounded-md"
             className="object-contain "
           />

@@ -47,8 +47,8 @@ export default async function CategoriesPage() {
       <Center>
         {
           keys.map((key, index) => (
-            <div key={index}>
-              <Title>{getCategoryName(key)}</Title>
+            <div key={index} className="p-2 md:px-4 lg:px-8 flex flex-col items-center">
+              <h1 className="text-semibold text-justify text-[24px] md:text-[30px] mb-2 md:mb-4">{getCategoryName(key)}</h1>
               <ProductsGrid products={groupedProducts[key]} />
             </div>
           ))
