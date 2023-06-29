@@ -143,7 +143,7 @@ export default function CartPage() {
   }
   return (
     <>
-      {/* <ToastContainer /> */}
+      <ToastContainer /> 
       <Center>
         <ColumnsWrapper>
           <Box>
