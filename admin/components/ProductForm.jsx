@@ -35,6 +35,12 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
 
   const router = useRouter();
   const pathname = usePathname()
+
+  const goBack = () => {
+    router.back()
+    // router.push("/products")
+  }
+
   const uploadImages = async(event) => {
     const files = event.target?.files;
     const uploadedFiles = [];
@@ -50,14 +56,13 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         const ext = parts[parts.length-1];
         if(ext !=="png" && ext!=="jpg" && ext !=="jpeg"){
           toast.error(`Error Uploading ${ext} Images format. Not recognized.`)
-          setIsUploading(false)
-          return
+        }else{
+          const uploadUrl = await uploadImageToS3(files[i], ext);
+          uploadedFiles.push(uploadUrl)
         }
-        const uploadUrl = await uploadImageToS3(files[i], ext);
-        // console.log('Image URL:', uploadUrl);
-        uploadedFiles.push(uploadUrl)
+        setIsUploading(false)        
       } catch (error) {
-        toast.error("Error Uploading one of the Images")
+        toast.error("Error Uploading one of the Images. File size may be too big")
         setIsUploading(false)
         return
       }      
@@ -131,8 +136,13 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
   }
 
   const updateImagesOrder = (images) => {
-    console.log(images)
     setImages(images)
+  }
+  const deleteImage = (image) => {
+    // console.log(image)
+    // console.log(images)
+    const otherImages = images.filter((img) => img !== image)
+    setImages(otherImages)
   }
   
   return (
@@ -185,6 +195,11 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
               images.length > 0 && images.map(image => (
                 <div className="w-48 h-48 border border-blue-900 rounded-lg relative" key={image}>
                   <Image src={image.toString()} fill alt={image} className='rounded-md object-cover' />
+                  <button type="button" onClick={() => deleteImage(image)} className="absolute rounded-full p-1 bg-white border-2 border-black text-red-500 bottom-1 right-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                  </button>
                 </div>
               ) )           
             }
@@ -210,9 +225,15 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
             value={price}
             onChange={ev => setPrice(ev.target.value)}
             className="border-2 border-gray-300 rounded-md p-1 self-start mb-2 focus:border-blue-900" />
-        <button type='submit' className='bg-blue-900 text-white p-2 rounded-xl self-start'>
-          {pathname.includes("edit")?"Edit Product": "Add Product"}
-        </button>
+        
+        <div className="flex flex-row gap-4">
+          <button type='submit' className='bg-blue-900 text-white p-2 rounded-xl self-start'>
+            {pathname.includes("edit")?"Edit Product": "Add Product"}
+          </button>
+          <button onClick={goBack} type='button' className='bg-gray-500  text-white p-2 px-4 rounded-xl self-start'>
+            Cancel
+          </button>
+        </div>        
         </form>   
     </div>
   )

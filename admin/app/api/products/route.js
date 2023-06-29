@@ -1,17 +1,17 @@
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import connect from "@/lib/db";
-import { getServerSession } from "next-auth";
 import {isAdminRequest } from "../auth/[...nextauth]/route";
 
 async function handler(req,res){
     const {method} = req;
     await connect();
-    try {
-        await isAdminRequest()
-    } catch (error) {
-        return new NextResponse("No necessary privileges!", {status: 401})
-    }
+    // To confirm user is logged in and is an admin, prevent third parties and postman access
+    // try {
+    //     await isAdminRequest()
+    // } catch (error) {
+    //     return new NextResponse("No necessary privileges!", {status: 401})
+    // }
 
     if (method === "GET"){
         const url = new URL(req.url);
