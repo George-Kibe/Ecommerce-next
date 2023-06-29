@@ -6,7 +6,7 @@ import React, { useContext, useState } from 'react'
 
 const CustomLink = ({href,name, items, toggle}) => {
   const pathname = usePathname();
-  const inActiveLink = "relative py-2 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300"
+  const inActiveLink = "relative py-2 px-2 text-gray-400 font-semibold hover:text-green-500 transition duration-300"
   const activeLink = "relative py-2 px-2 text-green-500 font-semibold"
   const router = useRouter();
   const handleClick = () => {
@@ -15,8 +15,8 @@ const CustomLink = ({href,name, items, toggle}) => {
   }
   return(
     <button onClick={handleClick} href={href} className={pathname === href? activeLink : inActiveLink}>
-     <p className="text-gray-400 text-xl ml-2 text-start">{name}</p>
-      {items && <div className="absolute top-0 left-16 px-2 text-emerald-600 rounded-full bg-white">{items}</div> }
+     <p className="text-xl ml-2 text-start">{name}</p>
+      {items > 0 && <div className="absolute top-0 left-16 px-2 text-emerald-600 rounded-full bg-white">{items}</div> }
     </button>
   )
 }

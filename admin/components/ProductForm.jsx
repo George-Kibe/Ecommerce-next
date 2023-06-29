@@ -129,6 +129,11 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
       catInfo=parentCat
     }     
   }
+
+  const updateImagesOrder = (images) => {
+    console.log(images)
+    setImages(images)
+  }
   
   return (
     <div className="w-full h-full text-black">
@@ -175,15 +180,15 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         </textarea>
         <label >Photos</label>
         <div className="mb-2 flex flex-wrap gap-2">
-          {/* <ReactSortable className='flex flex-wrap gap-2' list={images} setList={updateImagesOrder}>          */}
+          <ReactSortable className='flex flex-wrap gap-2' list={images} setList={updateImagesOrder}>         
             {
               images.length > 0 && images.map(image => (
                 <div className="w-48 h-48 border border-blue-900 rounded-lg relative" key={image}>
-                  <Image src={image} fill alt={image} className='rounded-md object-cover' />
+                  <Image src={image.toString()} fill alt={image} className='rounded-md object-cover' />
                 </div>
               ) )           
             }
-          {/* </ReactSortable> */}
+          </ReactSortable>
           {
             isUploading && <div className="h-48 w-32 flex border-2 border-blue-900 items-center justify-center rounded-lg"><FadeLoader /></div>
           }

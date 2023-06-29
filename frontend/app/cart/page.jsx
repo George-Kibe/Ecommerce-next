@@ -87,6 +87,7 @@ export default function CartPage() {
     if (window?.location.href.includes('success')) {
       setIsSuccess(true);
       clearCart();
+      toast.success("Thank you for shopping with us");
     }
   }, []);
   function moreOfThisProduct(product) {
