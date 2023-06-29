@@ -1,4 +1,6 @@
 "use client"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import CartIcon from "@/components/icons/CartIcon";
 import Link from "next/link";
 import {useContext} from "react";
@@ -8,10 +10,16 @@ import StarIcon from "./icons/StarIcon";
 
 
 export default function ProductBox({_id,title,price,images, product}) {
-  const {addProduct} = useContext(CartContext);
+  const {addProduct, cartProducts} = useContext(CartContext);
   const url = '/products/'+_id;
+  const handleAddToCart = (product) => {
+    const existingProduct = cartProducts.find((p) => p._id === product._id)
+    existingProduct && toast.success("Item Already in cart. Quantity added by one")
+    addProduct(product)
+  }
   return (
     <div className="flex flex-col items-center w-[45vw] h-[30vh] md:w-full justify-between max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <ToastContainer />
       <Link href={url} className="flex rounded-md w-[30vw] h-[30vh] md:w-[300px] md:h-[300px] relative">
         <Image
           fill
@@ -30,7 +38,7 @@ export default function ProductBox({_id,title,price,images, product}) {
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-between">
           <span className="text-nm font-bold text-gray-900 dark:text-white">Kshs.&nbsp;{price}</span>
-          <button onClick={() => addProduct(product)}
+          <button onClick={() => handleAddToCart(product)}
             className="text-white flex ml-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             <CartIcon />
             Add&nbsp;to&nbsp;cart

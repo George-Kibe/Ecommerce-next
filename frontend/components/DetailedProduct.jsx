@@ -1,4 +1,6 @@
 "use client"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Center from "./Center";
 import Title from "./Title";
 import styled from "styled-components";
@@ -29,9 +31,15 @@ const Price = styled.span`
 `;
 
 export default  function DetailedProduct({product}) {
-  const {addProduct} = useContext(CartContext);
+  const {addProduct, cartProducts} = useContext(CartContext);
+  function handleAddToCart(product) {
+    const existingProduct = cartProducts.find((p) => p._id === product._id)
+    existingProduct && toast.success("Item Already in cart. Quantity added by one")
+    addProduct(product)
+  }
   return (
     <>
+    <ToastContainer />
       <Center>
         <ColWrapper>
           <WhiteBox>
@@ -45,7 +53,7 @@ export default  function DetailedProduct({product}) {
                 <Price>${product.price}</Price>
               </div>
               <div>
-                <Button primary={1} onClick={() => addProduct(product)}>
+                <Button primary={1} onClick={() => handleAddToCart(product)}>
                   <CartIcon />Add to cart
                 </Button>
               </div>

@@ -15,7 +15,7 @@ const CustomLink = ({href,name, items, toggle}) => {
   }
   return(
     <button onClick={handleClick} href={href} className={pathname === href? activeLink : inActiveLink}>
-     <p className="text-xl ml-2 text-start">{name}</p>
+     <p className="text-gray-400 text-xl ml-2 text-start">{name}</p>
       {items && <div className="absolute top-0 left-16 px-2 text-emerald-600 rounded-full bg-white">{items}</div> }
     </button>
   )

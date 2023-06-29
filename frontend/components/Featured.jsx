@@ -1,4 +1,6 @@
 "use client"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Center from "@/components/Center";
 import styled from "styled-components";
 import Button from "@/components/Button";
@@ -7,8 +9,6 @@ import CartIcon from "@/components/icons/CartIcon";
 import {useContext} from "react";
 import {CartContext} from "@/context/CartContext";
 import Image from "next/image";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const Bg = styled.div`
   background-color: #222;
@@ -63,10 +63,13 @@ const ButtonsWrapper = styled.div`
 `;
 
 export default function Featured({product}) {
-  const {addProduct} = useContext(CartContext);
+  const {addProduct, cartProducts} = useContext(CartContext);
   function addFeaturedToCart() {
-    addProduct(product);
+    const existingProduct = cartProducts.find((p) => p._id === product._id)
+    existingProduct && toast.success("Item Already in cart. Quantity added by one")
+    addProduct(product)
   }
+
   return (
     <Bg>
       <Center>
