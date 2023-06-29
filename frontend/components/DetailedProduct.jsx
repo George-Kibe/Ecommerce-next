@@ -35,7 +35,7 @@ export default  function DetailedProduct({product}) {
       <Center>
         <ColWrapper>
           <WhiteBox>
-            { product.images?.length > 0 && <ProductImages images={product.images} /> }            
+            { product.images?.length > 0 ? <ProductImages images={product.images} /> :"No Image" }            
           </WhiteBox>
           <div>
             <Title>{product.title}</Title>

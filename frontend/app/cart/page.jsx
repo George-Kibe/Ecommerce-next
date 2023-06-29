@@ -1,4 +1,6 @@
 "use client"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styled from "styled-components";
 import Center from "@/components/Center";
 import Button from "@/components/Button";
@@ -99,14 +101,25 @@ export default function CartPage() {
     
   }
   async function goToPayment() {
-    const response = await axios.post('/api/checkout', {
-      name,email,city,postalCode,streetAddress,country,
-      cartProducts,
-    });
-    if (response.data.url) {
-      window.location = response.data.url;
+    if(!name|!email|!city|!streetAddress|!country|!cartProducts.length){
+      toast.error("You have missing necessary details");
+      return
     }
+    toast.info("Processing Your Payment")
+    try {
+      const response = await axios.post('/api/checkout', {
+        name,email,city,postalCode,streetAddress,country,
+        cartProducts,
+      });
+      console.log("Checkout Response: ", response)
+      // if (response.data.url) {
+      //   window.location = response.data.url;
+      // }
+    } catch (error) {
+      toast.error("Your order has not been processed. Try Again")
+    }    
   }
+
   const total = cartProducts.reduce(
     (sum, cartProduct) => sum + cartProduct.price * cartProduct.quantity || 0,
     0,
@@ -115,7 +128,6 @@ export default function CartPage() {
   if (isSuccess) {
     return (
       <>
-        <Header />
         <Center>
           <ColumnsWrapper>
             <Box>
@@ -129,6 +141,7 @@ export default function CartPage() {
   }
   return (
     <>
+      {/* <ToastContainer /> */}
       <Center>
         <ColumnsWrapper>
           <Box>

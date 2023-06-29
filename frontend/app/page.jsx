@@ -5,6 +5,8 @@ import Product from '@/models/Product'
 
 async function getFeaturedProductDetails(id) {
   await connect()
+  // const ids = req.body.ids;
+  // res.json(await Product.find({_id:ids}));
   const response = await Product.findById(id);
   const productData = JSON.parse(JSON.stringify(response))
   return productData
