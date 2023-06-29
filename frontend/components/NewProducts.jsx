@@ -1,19 +1,12 @@
 "use client"
-import styled from "styled-components";
-import Center from "@/components/Center";
-import ProductsGrid from "@/components/ProductsGrid";
 
-const Title = styled.h2`
-  font-size: 2rem;
-  margin:30px 0 20px;
-  font-weight: normal;
-`;
+import ProductsGrid from "@/components/ProductsGrid";
 
 export default function NewProducts({products}) {
   return (
-    <Center>
-      <Title>New Arrivals</Title>
+    <div className="p-2 md:p-4 lg:p-8">
+      <h2 className="text-semibold text-[24px] md:text-[30px] mb-2 md:mb-4">New Arrivals</h2>
       <ProductsGrid products={products} />
-    </Center>
+    </div>
   );
 }

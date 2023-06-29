@@ -1,89 +1,42 @@
 "use client"
-import styled from "styled-components";
-import Button from "@/components/Button";
 import CartIcon from "@/components/icons/CartIcon";
 import Link from "next/link";
 import {useContext} from "react";
 import {CartContext} from "@/context/CartContext";
+import Image from "next/image";
+import StarIcon from "./icons/StarIcon";
 
-const ProductWrapper = styled.div`
-  background-color: whitesmoke;
-  padding: 10px;
-  border-radius: 5px;
-`;
-
-const WhiteBox = styled(Link)`
-  background-color: transparent;
-  padding: 10px;
-  height: 160px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  img{
-    max-width: 100%;
-    max-height: 160px;
-    border-radius: 10px;
-  }
-`;
-
-const Title = styled(Link)`
-  font-weight: normal;
-  font-size:.9rem;
-  color:inherit;
-  text-decoration:none;
-  margin:0;
-`;
-
-const ProductInfoBox = styled.div`
-  margin-top: 5px;
-`;
-
-const PriceRow = styled.div`
-  display: block;
-  @media screen and (min-width: 768px) {
-    display: flex;
-    gap: 5px;
-  }
-  align-items: center;
-  justify-content:space-between;
-  margin-top:2px;
-`;
-
-const Price = styled.div`
-  font-size: 0.8rem;
-  font-weight:400;
-  text-align: right;
-  @media screen and (min-width: 768px) {
-    font-size: 1rem;
-    font-weight:600;
-    text-align: left;
-  }
-`;
 
 export default function ProductBox({_id,title,price,images, product}) {
   const {addProduct} = useContext(CartContext);
   const url = '/products/'+_id;
   return (
-    <ProductWrapper>
-      <WhiteBox href={url}>
-        <div>
-          <img src={images?.[0]} alt={title}/>
+    <div className="flex flex-col items-center w-[45vw] h-[30vh] md:w-full justify-between max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <Link href={url} className="flex rounded-md w-[30vw] h-[30vh] md:w-[300px] md:h-[300px] relative">
+        <Image
+          fill
+          src={images?.[0]} 
+          className="object-fit rounded-md"
+          alt={title}
+        />
+      </Link>
+      <div className="px-5 pb-5">
+        <Link href={url}>
+          <h5 className="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{title}</h5>
+        </Link>
+        <div className="flex items-center mt-2.5 mb-5">
+          <StarIcon />
+          <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-3">5.0</span>
         </div>
-      </WhiteBox>
-      <ProductInfoBox>
-        <Title href={url}>{title}</Title>
-        <PriceRow>
-          <Price>
-            Kshs.&nbsp;{price}
-          </Price>
-          <Button white={1} primary={1} onClick={() => addProduct(product)}  >
+        <div className="flex flex-col sm:flex-row items-center justify-between">
+          <span className="text-nm font-bold text-gray-900 dark:text-white">Kshs.&nbsp;{price}</span>
+          <button onClick={() => addProduct(product)}
+            className="text-white flex ml-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             <CartIcon />
             Add&nbsp;to&nbsp;cart
-          </Button>
-        </PriceRow>
-      </ProductInfoBox>
-    </ProductWrapper>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,22 +1,12 @@
 "use client"
-import styled from "styled-components";
 import ProductBox from "@/components/ProductBox";
-
-const StyledProductsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  @media screen and (min-width: 768px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-`;
 
 export default function ProductsGrid({products}) {
   return (
-    <StyledProductsGrid>
+    <div className="flex flex-row flex-wrap gap-y-4 gap-x-2 md:gap-4 lg:gap-8">
       {products?.length > 0 && products.map(product => (
         <ProductBox key={product._id} product={product} {...product} />
       ))}
-    </StyledProductsGrid>
+    </div>
   );
 }

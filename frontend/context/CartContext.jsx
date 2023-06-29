@@ -26,7 +26,6 @@ export function CartContextProvider({children}) {
     }else{
       product["quantity"] = 1
       setCartProducts(prev => [...prev,product]);
-      toast.success("Product added to cart")
     }    
   }
   function removeQuantity(product) {
