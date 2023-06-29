@@ -78,7 +78,7 @@ export default function ProductBox({_id,title,price,images, product}) {
           <Price>
             Kshs.&nbsp;{price}
           </Price>
-          <Button white onClick={() => addProduct(product)} primary outline>
+          <Button white={1} primary={1} onClick={() => addProduct(product)}  >
             <CartIcon />
             Add&nbsp;to&nbsp;cart
           </Button>

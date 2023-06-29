@@ -1,4 +1,3 @@
-import {Product} from "@/models/Product";
 import {Order} from "@/models/Order";
 import connect from "@/lib/db";
 import { NextResponse } from "next/server";
@@ -22,22 +21,28 @@ async function handler(req,res) {
       });
     }
   }
-
-  const orderDoc = await Order.create({
-    line_items,name,email,city,postalCode,
-    streetAddress,country,paid:false,
-  });
-
-  const session = await stripe.checkout.sessions.create({
-    line_items,
-    mode: 'payment',
-    customer_email: email,
-    success_url: process.env.PUBLIC_URL + '/cart?success=1',
-    cancel_url: process.env.PUBLIC_URL + '/cart?canceled=1',
-    metadata: {orderId:orderDoc._id.toString(),test:'ok'},
-  });
-
-  return new NextResponse("Order has been Created", {status: 201})
+  try {
+    const orderDoc = await Order.create({
+        line_items,name,email,city,postalCode,
+        streetAddress,country,paid:false,
+      });
+    try {
+        const session = await stripe.checkout.sessions.create({
+            line_items,
+            mode: 'payment',
+            customer_email: email,
+            success_url: process.env.PUBLIC_URL + '/cart?success=1',
+            cancel_url: process.env.PUBLIC_URL + '/cart?canceled=1',
+            metadata: {orderId:orderDoc._id.toString(),test:'ok'},
+          });
+          const url = JSON.stringify({"url":session.url})
+          return new NextResponse(url, {status: 201})
+    } catch (error) {
+        return new NextResponse("Stripe checkout error", {status: 500})
+    }
+  } catch (error) {
+    return new NextResponse("Order creating error", {status: 500})
+  }
 }
 
 export {handler as POST};

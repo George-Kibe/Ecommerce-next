@@ -2,6 +2,7 @@ import Header from '@/components/Header'
 import './globals.css'
 import { Poppins } from 'next/font/google'
 import { CartContextProvider } from '@/context/CartContext'
+import Footer from '@/components/Footer'
 
 const poppins = Poppins({ subsets: ['latin'] , weight:["400"]})
 
@@ -17,6 +18,7 @@ export default function RootLayout({ children }) {
         <CartContextProvider>
           <Header />
           {children}
+          <Footer />
         </CartContextProvider>        
       </body>
     </html>

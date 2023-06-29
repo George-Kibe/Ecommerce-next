@@ -112,10 +112,11 @@ export default function CartPage() {
         cartProducts,
       });
       console.log("Checkout Response: ", response)
-      // if (response.data.url) {
-      //   window.location = response.data.url;
-      // }
+      if (response.data.url) {
+        window.location = response.data.url;
+      }
     } catch (error) {
+      console.log(error.message)
       toast.error("Your order has not been processed. Try Again")
     }    
   }
@@ -131,7 +132,8 @@ export default function CartPage() {
         <Center>
           <ColumnsWrapper>
             <Box>
-              <h1>Thanks for your order!</h1>
+              <h1 className='text-[25px] font-semibold'>Thanks for your order!</h1>
+              <h1 className='text-[22px] font-medium'>We do not take it for granted that you chose to shop with us</h1>
               <p>We will email you when your order will be sent.</p>
             </Box>
           </ColumnsWrapper>
@@ -229,7 +231,7 @@ export default function CartPage() {
                      value={country}
                      name="country"
                      onChange={ev => setCountry(ev.target.value)}/>
-              <Button black block
+              <Button black={1} block={1}
                       onClick={goToPayment}>
                 Continue to payment
               </Button>

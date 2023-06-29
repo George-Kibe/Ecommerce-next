@@ -1,6 +1,4 @@
 "use client"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import {createContext, useEffect, useState} from "react";
 
 export const CartContext = createContext({});
@@ -25,7 +23,6 @@ export function CartContextProvider({children}) {
       const newCartProducts = cartProducts.filter(p => p._id !== product._id)
       existingProduct["quantity"] = existingProduct.quantity+1
       setCartProducts([existingProduct, ...newCartProducts]);
-      toast.success("Product already in cart. Quantity added by one")
     }else{
       product["quantity"] = 1
       setCartProducts(prev => [...prev,product]);
@@ -48,10 +45,7 @@ export function CartContextProvider({children}) {
   }
   return (
     <CartContext.Provider value={{cartProducts,setCartProducts,addProduct, removeQuantity,removeProduct,clearCart}}>
-      <>
-        <ToastContainer />
-        {children}
-      </>     
+      {children}   
     </CartContext.Provider>
   );
 }

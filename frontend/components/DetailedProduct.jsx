@@ -45,7 +45,7 @@ export default  function DetailedProduct({product}) {
                 <Price>${product.price}</Price>
               </div>
               <div>
-                <Button primary onClick={() => addProduct(product)}>
+                <Button primary={1} onClick={() => addProduct(product)}>
                   <CartIcon />Add to cart
                 </Button>
               </div>
