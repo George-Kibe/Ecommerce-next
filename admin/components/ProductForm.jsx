@@ -56,9 +56,12 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
         const ext = parts[parts.length-1];
         if(ext !=="png" && ext!=="jpg" && ext !=="jpeg"){
           toast.error(`Error Uploading ${ext} Images format. Not recognized.`)
+          setIsUploading(false)
+          return
         }else{
           const uploadUrl = await uploadImageToS3(files[i], ext);
-          uploadedFiles.push(uploadUrl)
+          !uploadUrl && toast.error("Image(s) not Uploaded. Try Again!")
+          uploadUrl && uploadedFiles.push(uploadUrl)
         }
         setIsUploading(false)        
       } catch (error) {
@@ -124,15 +127,15 @@ const ProductForm = ({_id:id, title:existingTitle, description:existingDescripti
     }
   }
 
-  const propertiesToFill = []
-  if(categories.length > 0 && category){
-    let catInfo = categories.find(({_id}) => _id === category)
-    propertiesToFill.push(...catInfo.properties)
-    while(catInfo?.parentCategory?._id){
-      const parentCat = categories.find(({_id}) => _id= catInfo.parentCategory._id)
+  const propertiesToFill = [];
+  if (categories.length > 0 && category) {
+    let catInfo = categories.find(({_id}) => _id === category);
+    propertiesToFill.push(...catInfo.properties);
+    while(catInfo?.parentCategory?._id) {
+      const parentCat = categories.find(({_id}) => _id === catInfo?.parentCategory?._id);
       propertiesToFill.push(...parentCat.properties);
-      catInfo=parentCat
-    }     
+      catInfo = parentCat;
+    }
   }
 
   const updateImagesOrder = (images) => {

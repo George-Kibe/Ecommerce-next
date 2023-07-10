@@ -1,36 +1,37 @@
-import AWS from 'aws-sdk';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const AWS_ACCESS_KEY_ID=process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
 const AWS_SECRET_ACCESS_KEY=process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
 const AWS_S3_REGION=process.env.NEXT_PUBLIC_AWS_S3_REGION
 const S3_BUCKET_NAME=process.env.NEXT_PUBLIC_S3_BUCKET_NAME
 
+// Upload an image file to S3
 async function uploadImageToS3(file, ext) {
-  // Configure AWS SDK
-  AWS.config.update({
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    region: AWS_S3_REGION
+  const s3Client = new S3Client({
+    region: AWS_S3_REGION,
+    credentials: {
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    },
   });
 
-  const s3 = new AWS.S3();
-  // Generate a unique filename for the uploaded image
+  // Generate a unique key for the uploaded image
   const fileName = `${Date.now()}.${ext}`;
 
-  // Set the parameters for S3 upload
-  const params = {
+  // Prepare the parameters for the S3 upload
+  const uploadParams = {
     Bucket: S3_BUCKET_NAME,
     Key: fileName,
-    Body: file
+    Body: file,
   };
 
   try {
-    // Upload the image to S3
-    const data = await s3.upload(params).promise();
-    console.log('Image uploaded successfully:', data.Location);
-    return data.Location; // Return the S3 URL of the uploaded image
+    // Execute the upload command
+    const command = new PutObjectCommand(uploadParams);
+    const response = await s3Client.send(command);
+    return `https://mernbnb-images-bucket.s3.amazonaws.com/${fileName}`
   } catch (error) {
-    console.error('Error uploading image:', error.message);
+    console.error("Error uploading image to S3:", error);
     throw error;
   }
 }
