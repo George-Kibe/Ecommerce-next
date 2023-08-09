@@ -11,3 +11,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* {
+  "id": {
+    "S": "bvsdjveffefefedggg"
+  },
+  "title": {
+    "S": "This is just a test title"
+  },
+  "description": {
+    "S": "Test song for this amplify application"
+  },
+  "filePath": {
+    "S": "no/Path"
+  },
+  "likes": {
+    "N": "5"
+  },
+  "owner": {
+    "S": "George Test"
+  },
+  "createdAt": {
+    "S": "2023-08-09T15:17:35.749Z"
+  },
+  "updatedAt": {
+    "S": "2023-08-09T15:17:35.749Z"
+  }
+} */
