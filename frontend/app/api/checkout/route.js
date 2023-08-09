@@ -6,6 +6,7 @@ const stripe = require('stripe')(process.env.STRIPE_SK);
 async function handler(req,res) {
   const body = await req.json()
   const {name,email,city,postalCode,streetAddress,country,cartProducts} = body;
+  console.log(body)
   await connect();
 
   let line_items = [];
@@ -28,6 +29,7 @@ async function handler(req,res) {
       });
     try {
         const session = await stripe.checkout.sessions.create({
+            payment_method_types : ['card'], 
             line_items,
             mode: 'payment',
             customer_email: email,
@@ -38,6 +40,7 @@ async function handler(req,res) {
           const url = JSON.stringify({"url":session.url})
           return new NextResponse(url, {status: 201})
     } catch (error) {
+        console.log(error.message)
         return new NextResponse("Stripe checkout error", {status: 500})
     }
   } catch (error) {
