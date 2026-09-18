@@ -1,6 +1,5 @@
 "use client"
 import styled, {css} from "styled-components";
-import {primary} from "@/lib/colors";
 
 export const ButtonStyle = css`
   border:0;
@@ -31,33 +30,43 @@ export const ButtonStyle = css`
     display: block;
     width: 100%;
   `}
+  /*
+    Variants read theme tokens rather than hardcoded #000/#fff, so they invert
+    correctly in dark mode — a literal black button is invisible on a dark
+    panel. "black" is the strongest contrast colour (black in light mode,
+    near-white in dark); "white" is the page-surface colour.
+  */
   ${props => props.white && !props.outline && css`
-    background-color: #fff;
-    color: #000;
+    background-color: var(--surface);
+    color: var(--fg);
   `}
   ${props => props.white && props.outline && css`
     background-color: transparent;
-    color: #fff;
-    border: 1px solid #fff;
+    color: var(--fg);
+    border: 1px solid var(--field-line);
   `}
   ${props => props.black && !props.outline && css`
-    background-color: #000;
-    color: #fff;
+    background-color: var(--strong);
+    color: var(--on-strong);
   `}
   ${props => props.black && props.outline && css`
     background-color: transparent;
-    color: #000;
-    border: 1px solid #000;
+    color: var(--strong);
+    border: 1px solid var(--strong);
   `}
   ${props => props.primary && !props.outline && css`
-    background-color: ${primary};
-    border: 1px solid ${primary};
-    color:#fff;
+    background-color: var(--accent);
+    border: 1px solid var(--accent);
+    color: var(--on-accent);
+    &:hover:not(:disabled){
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
   `}
   ${props => props.primary && props.outline && css`
     background-color: transparent;
-    border: 1px solid ${primary};
-    color:${primary};
+    border: 1px solid var(--link);
+    color: var(--link);
   `}
   ${props => props.size === 'l' && css`
     font-size:1.2rem;

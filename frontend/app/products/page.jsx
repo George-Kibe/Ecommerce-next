@@ -53,7 +53,7 @@ export default async function ProductsPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(listStructuredData(products)) }}
         />
       )}
-      <h1 className="mb-4 text-center text-2xl font-semibold text-gray-900 md:mb-6 md:text-3xl">
+      <h1 className="mb-4 text-center text-2xl font-semibold text-fg md:mb-6 md:text-3xl">
         All Products
       </h1>
       {products.length === 0 ? (

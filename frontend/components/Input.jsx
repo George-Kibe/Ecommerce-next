@@ -11,7 +11,9 @@ const StyledInput = styled.input`
   padding: 10px;
   min-height: 44px;
   margin-bottom: 8px;
-  border: 1px solid #6b7280;
+  border: 1px solid var(--field-line);
+  background-color: var(--field);
+  color: var(--fg);
   border-radius: 5px;
   box-sizing: border-box;
   font-size: 1rem;

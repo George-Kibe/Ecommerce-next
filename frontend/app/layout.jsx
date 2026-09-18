@@ -1,11 +1,12 @@
 import './globals.css'
 import 'react-toastify/dist/ReactToastify.css'
-import { ToastContainer } from 'react-toastify'
 import { Poppins } from 'next/font/google'
 import { CartContextProvider } from '@/context/CartContext'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry'
+import ThemeProvider from '@/components/ThemeProvider'
+import ThemedToastContainer from '@/components/ThemedToastContainer'
 import { BRAND, SITE_URL } from '@/lib/brand'
 
 // `display: swap` renders text in a fallback face immediately instead of
@@ -61,7 +62,12 @@ export const metadata = {
 }
 
 export const viewport = {
-  themeColor: BRAND.color,
+  // Browser UI colour (address bar on mobile) — matches the navbar, which is
+  // near-black in both themes.
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#000000' },
+    { media: '(prefers-color-scheme: dark)', color: '#030712' },
+  ],
   width: 'device-width',
   initialScale: 1,
   // Never block pinch-zoom — capping user-scalable is an accessibility failure.
@@ -104,13 +110,14 @@ function siteStructuredData() {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.className} flex flex-col justify-between bg-gray-300 min-h-screen w-full h-full`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${poppins.className} flex flex-col justify-between bg-page text-fg min-h-screen w-full h-full`}>
         <script
           type="application/ld+json"
           // Values come from our own constants, not user input.
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteStructuredData()) }}
         />
+        <ThemeProvider>
         <StyledComponentsRegistry>
           <CartContextProvider>
             <Navbar />
@@ -122,8 +129,9 @@ export default function RootLayout({ children }) {
           </CartContextProvider>
           {/* One container for the whole app — it used to be rendered once per
               product card, which duplicated every toast. */}
-          <ToastContainer position="bottom-right" newestOnTop />
+          <ThemedToastContainer />
         </StyledComponentsRegistry>
+        </ThemeProvider>
       </body>
     </html>
   )

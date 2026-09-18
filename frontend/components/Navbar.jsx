@@ -2,39 +2,50 @@
 import { CartContext } from '@/context/CartContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Logo from '@/components/Logo'
+import ThemeToggle from '@/components/ThemeToggle'
 import { BRAND } from '@/lib/brand'
 
-/*
-  This was a <button> carrying an `href` prop (invalid, and React warns) that
-  navigated via router.push. That meant no middle-click, no open-in-new-tab, no
-  link semantics for assistive tech. It's a real link now, with the current page
-  marked by aria-current rather than colour alone, and the cart count given a
-  spoken label instead of a bare number.
-*/
-const CustomLink = ({href, name, items, toggle}) => {
-  const pathname = usePathname();
-  const isActive = pathname === href;
-  // Sizes down at md so five links plus the wordmark fit on a tablet without
-  // wrapping onto a second line, then back up at lg.
-  const base = "relative flex items-center min-h-11 py-2 px-2 font-semibold whitespace-nowrap transition duration-300";
-  const tone = isActive
-    ? "text-green-400"
-    : "text-gray-300 hover:text-green-400";
+const LINKS = [
+  { href: "/", name: "Home" },
+  { href: "/products", name: "All products" },
+  { href: "/categories", name: "Categories" },
+  { href: "/account", name: "Account" },
+  { href: "/cart", name: "Cart", showCount: true },
+]
 
-  return(
+/*
+  A real link (not a button with an href), with the current page marked by
+  aria-current rather than colour alone.
+
+  Home used to point at "/#", which never equals the pathname "/", so it was
+  never shown as the current page. The cart count was absolutely positioned at
+  a fixed offset and drifted off the label at other font sizes; it's now an
+  inline pill.
+*/
+const NavLink = ({ href, name, count, onNavigate, block = false }) => {
+  const pathname = usePathname();
+  const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+  return (
     <Link
       href={href}
-      onClick={toggle}
+      onClick={onNavigate}
       aria-current={isActive ? "page" : undefined}
-      className={`${base} ${tone}`}
+      className={`flex min-h-11 items-center gap-2 rounded-md px-3 font-semibold whitespace-nowrap transition-colors ${
+        block ? "w-full" : ""
+      } ${
+        isActive
+          ? "text-chrome-active"
+          : "text-chrome-fg hover:bg-white/10 hover:text-chrome-fg-strong"
+      }`}
     >
-      <span className="ml-2 text-start text-base lg:text-lg">{name}</span>
-      {items > 0 && (
-        <span className="absolute top-0 left-16 px-2 text-emerald-700 rounded-full bg-white">
-          <span aria-hidden="true">{items}</span>
-          <span className="sr-only">{`${items} item${items === 1 ? "" : "s"} in cart`}</span>
+      <span className="text-base lg:text-lg">{name}</span>
+      {count > 0 && (
+        <span className="rounded-full bg-white px-2 text-sm font-bold text-emerald-700">
+          <span aria-hidden="true">{count}</span>
+          <span className="sr-only">{`, ${count} item${count === 1 ? "" : "s"} in cart`}</span>
         </span>
       )}
     </Link>
@@ -43,64 +54,78 @@ const CustomLink = ({href, name, items, toggle}) => {
 
 const Navbar = () => {
   const [showMobileNav, setShowMobileNav] = useState(false)
-  const {cartProducts} = useContext(CartContext);
-  const pathname = usePathname()
-  const handleClick = () => {
-    setShowMobileNav(!showMobileNav)
-  }
-  return (    
-    <nav className="bg-black shadow-lg">
-        <div className="mx-auto px-4 mr-8">
-            <div className="flex justify-between">
-                <div className="flex space-x-2 justify-between flex-1">
-                    <div>
-                        <Link href="/" className="flex items-center py-4 px-2 text-white" aria-label={`${BRAND.name} home`}>
-                            <Logo />
-                        </Link>
-                    </div>                  
-                    <div className="hidden md:flex items-center space-x-1">
-                      <CustomLink href={"/#"} name={"Home"} toggle={handleClick}/>
-                      <CustomLink href={"/products"} name={"All products"} toggle={handleClick}/>
-                      <CustomLink href={"/categories"} name={"Categories"} toggle={handleClick}/>
-                      <CustomLink href={"/account"} name={"Account"} toggle={handleClick}/>
-                      <CustomLink href={"/cart"} name={"Cart"} items={cartProducts.length} toggle={handleClick}/>
-                    </div>
-                </div>
-                <div className="md:hidden flex items-center">
-                    {/* `outline-none` removed the only focus indicator, and
-                        `x-show` was a leftover Alpine.js attribute React
-                        doesn't understand. */}
-                    <button onClick={handleClick}
-                        aria-label={showMobileNav ? "Close menu" : "Open menu"}
-                        aria-expanded={showMobileNav}
-                        className="min-w-11 min-h-11 inline-flex items-center justify-center">
-                    <svg className=" w-6 h-6 text-gray-300 hover:text-green-500 "
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                     aria-hidden="true">
-                        <path d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-                </div>
-            </div>
+  const { cartProducts } = useContext(CartContext);
+  const cartCount = cartProducts.length;
+  const closeMobileNav = () => setShowMobileNav(false);
+
+  // Escape closes the mobile menu, matching the theme menu's behaviour.
+  useEffect(() => {
+    if (!showMobileNav) return;
+    const onKey = (e) => e.key === "Escape" && setShowMobileNav(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [showMobileNav]);
+
+  return (
+    <header className="bg-chrome border-b border-chrome-line shadow-lg">
+      <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2 md:px-8">
+        <Link
+          href="/"
+          onClick={closeMobileNav}
+          className="flex shrink-0 items-center py-2 text-chrome-fg-strong"
+          aria-label={`${BRAND.name} home`}
+        >
+          <Logo />
+        </Link>
+
+        <div className="flex items-center gap-1">
+          <ul className="hidden items-center gap-1 md:flex">
+            {LINKS.map((link) => (
+              <li key={link.href}>
+                <NavLink {...link} count={link.showCount ? cartCount : 0} />
+              </li>
+            ))}
+          </ul>
+
+          {/* Visible at every size — the theme shouldn't be buried in a menu. */}
+          <ThemeToggle />
+
+          <button
+            type="button"
+            onClick={() => setShowMobileNav((open) => !open)}
+            aria-label={showMobileNav ? "Close menu" : "Open menu"}
+            aria-expanded={showMobileNav}
+            aria-controls="mobile-nav"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-chrome-fg hover:bg-white/10 hover:text-chrome-fg-strong md:hidden"
+          >
+            {showMobileNav ? (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            ) : (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
-        {
-         showMobileNav && (
-            <div className="md:hidden flex flex-col">
-                <CustomLink href={"/#"} name={"Home"}toggle={handleClick}/>
-                <CustomLink href={"/products"} name={"All products"} toggle={handleClick}/>
-                <CustomLink href={"/categories"} name={"Categories"} toggle={handleClick}/>
-                <CustomLink href={"/account"} name={"Account"} toggle={handleClick}/>
-                <CustomLink href={"/cart"} name={"Cart"} items={cartProducts.length} toggle={handleClick}/>
-            </div> 
-         )
-        }
-        
-    </nav>
+      </nav>
+
+      {showMobileNav && (
+        <ul id="mobile-nav" className="border-t border-chrome-line px-4 pb-3 pt-2 md:hidden">
+          {LINKS.map((link) => (
+            <li key={link.href}>
+              <NavLink
+                {...link}
+                count={link.showCount ? cartCount : 0}
+                onNavigate={closeMobileNav}
+                block
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+    </header>
   )
 }
 

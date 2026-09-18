@@ -13,14 +13,14 @@ const StyledTable = styled.table`
       gray-600 and raised to .8rem (12.8px) so the column headings are
       actually readable.
     */
-    color: #4b5563;
+    color: var(--fg-subtle);
     font-weight: 600;
     font-size: .8rem;
     letter-spacing: .03em;
     padding-bottom: 8px;
   }
   td{
-    border-top: 1px solid rgba(0,0,0,.1);
+    border-top: 1px solid var(--divider);
     padding: 8px 0;
     vertical-align: middle;
   }

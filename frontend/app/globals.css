@@ -2,10 +2,156 @@
 @config "../tailwind.config.js";
 
 /*
+  `dark:` utilities follow the theme toggle (the data-theme attribute set by
+  next-themes), not the OS media query. Otherwise a user who picked Light on a
+  dark-mode OS would still get dark: styles.
+*/
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+  ─── Design tokens ──────────────────────────────────────────────────────────
+
+  Every colour in the storefront comes from here — Tailwind classes via the
+  @theme mapping below (bg-surface, text-fg, border-line, …) and the
+  styled-components via var(--token). That single source is what makes the
+  dark theme complete: a component can't be "half themed" because there is no
+  second palette to forget.
+
+  Every text pair was contrast-checked in both modes before use (WCAG AA:
+  4.5:1 text, 3:1 non-text UI). Notable choices:
+  - Dark buttons are blue-500 with near-black text (5.47:1). Blue-600 with
+    white text passed as text but was only 2.84:1 against a dark card.
+  - Light-mode danger is red-800: red-700 was 4.39:1 on the grey page.
+  - Product photos keep a white tile in both modes (they're white-background
+    catalogue shots); dark mode dims the whole tile slightly to cut glare
+    without exposing a seam between photo and tile.
+*/
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --page: #d1d5db;
+  --surface: #ffffff;
+  --surface-muted: #f5f5f5;
+  --chrome: #000000;
+
+  --fg: #111827;
+  --fg-muted: #374151;
+  --fg-subtle: #4b5563;
+  --line: #e5e7eb;
+  --divider: #d1d5db;
+
+  --chrome-fg: #d1d5db;
+  --chrome-fg-strong: #ffffff;
+  --chrome-active: #4ade80;
+  --chrome-line: #1f2937;
+
+  --link: #1d4ed8;
+  --accent: #1d4ed8;
+  --accent-hover: #1e40af;
+  --on-accent: #ffffff;
+  --accent-soft: #bfdbfe;
+  --on-accent-soft: #111827;
+
+  --strong: #000000;
+  --on-strong: #ffffff;
+
+  --field: #ffffff;
+  --field-line: #6b7280;
+  --placeholder: #6b7280;
+
+  --danger: #991b1b;
+  --success: #15803d;
+  --focus: #2563eb;
+
+  --hover: #f3f4f6;
+
+  --image-tile: #ffffff;
+  --image-dim: 1;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page: #111827;
+  --surface: #1f2937;
+  --surface-muted: #1f2937;
+  --chrome: #030712;
+
+  --fg: #f9fafb;
+  --fg-muted: #d1d5db;
+  --fg-subtle: #d1d5db;
+  --line: #374151;
+  --divider: #4b5563;
+
+  --chrome-fg: #d1d5db;
+  --chrome-fg-strong: #ffffff;
+  --chrome-active: #4ade80;
+  --chrome-line: #1f2937;
+
+  --link: #93c5fd;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --on-accent: #030712;
+  --accent-soft: #1e3a8a;
+  --on-accent-soft: #f9fafb;
+
+  --strong: #f9fafb;
+  --on-strong: #111827;
+
+  --field: #111827;
+  --field-line: #9ca3af;
+  --placeholder: #9ca3af;
+
+  --danger: #f87171;
+  --success: #4ade80;
+  --focus: #60a5fa;
+
+  --hover: #374151;
+
+  --image-tile: #ffffff;
+  --image-dim: 0.9;
+  /* Shadows barely register on a dark page; lean on borders instead. */
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+}
+
+/* Expose the tokens as Tailwind colours: bg-page, text-fg, border-line, … */
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-chrome: var(--chrome);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-line: var(--line);
+  --color-divider: var(--divider);
+  --color-chrome-fg: var(--chrome-fg);
+  --color-chrome-fg-strong: var(--chrome-fg-strong);
+  --color-chrome-active: var(--chrome-active);
+  --color-chrome-line: var(--chrome-line);
+  --color-link: var(--link);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent-soft: var(--on-accent-soft);
+  --color-strong: var(--strong);
+  --color-on-strong: var(--on-strong);
+  --color-field: var(--field);
+  --color-field-line: var(--field-line);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-focus: var(--focus);
+  --color-image-tile: var(--image-tile);
+  --color-hover: var(--hover);
+}
+
+/*
   Tailwind v4 changed some base defaults. These rules restore the v3 behaviour
-  the existing markup was written against:
-  - bare `border` / `divide` default to gray-200 instead of currentColor
-  - bare `ring` is 3px/blue-500 instead of 1px/currentColor
+  the existing markup was written against (bare `border` gets a neutral colour,
+  bare `ring` is 3px), now pointed at the tokens.
 */
 @layer base {
   *,
@@ -13,44 +159,56 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
-
-  /*
-    This is a light interface: light grey page, white cards, dark text.
-
-    It previously carried scattered `dark:` variants (copied in with the card
-    markup) that only ever covered the cards, the footer and two buttons —
-    never the page, the navbar, or any of the styled-components, which use
-    hardcoded light colours like `whitesmoke`. In system dark mode that
-    produced dark cards on a light page with near-white body text: unreadable.
-
-    Rather than half a dark theme, the palette is now light in both
-    appearances. A real dark mode means theming the styled-components too,
-    which is a separate change.
-  */
-  html {
-    color-scheme: light;
+    border-color: var(--line, currentColor);
   }
 
   body {
-    color: var(--color-gray-900);
+    background-color: var(--page);
+    color: var(--fg);
+  }
+
+  ::placeholder {
+    color: var(--placeholder);
+    opacity: 1;
   }
 
   /*
-    Always show a visible keyboard focus ring. Several controls previously had
-    no focus style at all, making keyboard navigation impossible to follow.
+    Always show a visible keyboard focus ring. The colour is a token because the
+    light-mode blue drops below 3:1 against the dark page.
   */
   :focus-visible {
-    outline: 3px solid var(--color-blue-600);
+    outline: 3px solid var(--focus);
     outline-offset: 2px;
   }
 }
 
 @utility ring {
   --tw-ring-offset-shadow: var(--tw-ring-inset, ) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, var(--color-blue-500));
+  --tw-ring-shadow: var(--tw-ring-inset, ) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, var(--focus));
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+/* White product-photo tile, dimmed as one unit in dark mode (no seam). */
+@utility image-tile {
+  background-color: var(--image-tile);
+  filter: brightness(var(--image-dim));
+}
+
+/*
+  Show only the icon that matches the active theme. Done in CSS rather than
+  React state so the toggle renders the right icon on the very first paint,
+  before hydration — there's no moment where it shows the wrong one.
+*/
+@layer components {
+  .theme-icon-dark {
+    display: none;
+  }
+  [data-theme="dark"] .theme-icon-dark {
+    display: inline-block;
+  }
+  [data-theme="dark"] .theme-icon-light {
+    display: none;
+  }
 }
 
 /*

@@ -20,7 +20,7 @@ export default function AccountPage() {
         </p>
         <Link
           href="/products"
-          className="inline-block bg-blue-700 text-white rounded-lg px-5 py-2.5 hover:bg-blue-800"
+          className="inline-block bg-accent text-on-accent rounded-lg px-5 py-2.5 hover:bg-accent-hover"
         >
           Browse products
         </Link>

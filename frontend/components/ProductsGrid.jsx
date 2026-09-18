@@ -14,8 +14,11 @@ export default function ProductsGrid({ products }) {
 
   return (
     <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
-      {products.map((product) => (
-        <ProductBox key={product._id} product={product} {...product} />
+      {products.map((product, index) => (
+        // The first row is above the fold and one of these images is usually
+        // the Largest Contentful Paint — lazy-loading it delays first paint.
+        // Four covers the widest (lg) row; later rows stay lazy.
+        <ProductBox key={product._id} product={product} eager={index < 4} {...product} />
       ))}
     </div>
   );

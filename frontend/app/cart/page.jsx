@@ -22,7 +22,9 @@ const ColumnsWrapper = styled.div`
 `;
 
 const Box = styled.div`
-  background-color: whitesmoke;
+  background-color: var(--surface-muted);
+  color: var(--fg);
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: 30px;
 `;
@@ -35,7 +37,9 @@ const ProductImageBox = styled.div`
   width: 70px;
   height: 100px;
   padding: 2px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--line);
+  background-color: var(--image-tile);
+  filter: brightness(var(--image-dim));
   display:flex;
   align-items: center;
   justify-content: center;
@@ -193,7 +197,7 @@ export default function CartPage() {
                         */}
                         <div className="flex items-center gap-2">
                           <button type="button"
-                            className="min-w-11 min-h-11 inline-flex items-center justify-center rounded-lg bg-blue-200 text-lg font-medium"
+                            className="min-w-11 min-h-11 inline-flex items-center justify-center rounded-lg bg-accent-soft text-on-accent-soft text-lg font-medium hover:brightness-110"
                             aria-label={product.quantity < 2
                               ? `Remove ${product.title} from cart`
                               : `Decrease quantity of ${product.title}`}
@@ -204,7 +208,7 @@ export default function CartPage() {
                             {product.quantity}
                           </QuantityLabel>
                           <button type="button"
-                            className="min-w-11 min-h-11 inline-flex items-center justify-center rounded-lg bg-blue-200 text-lg font-medium"
+                            className="min-w-11 min-h-11 inline-flex items-center justify-center rounded-lg bg-accent-soft text-on-accent-soft text-lg font-medium hover:brightness-110"
                             aria-label={`Increase quantity of ${product.title}`}
                             onClick={() => moreOfThisProduct(product)}>+</button>
                         </div>

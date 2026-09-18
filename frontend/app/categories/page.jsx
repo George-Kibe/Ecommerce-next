@@ -56,7 +56,7 @@ export default async function CategoriesPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-10">
-      <h1 className="mb-6 text-center text-2xl font-semibold text-gray-900 md:text-3xl">
+      <h1 className="mb-6 text-center text-2xl font-semibold text-fg md:text-3xl">
         Shop by Category
       </h1>
       {groups.length === 0 && (
@@ -64,7 +64,7 @@ export default async function CategoriesPage() {
       )}
       {groups.map((group) => (
         <section key={group.id} className="mb-10 last:mb-0">
-          <h2 className="mb-3 text-xl font-semibold text-gray-900 md:mb-4 md:text-2xl">
+          <h2 className="mb-3 text-xl font-semibold text-fg md:mb-4 md:text-2xl">
             {group.name}
           </h2>
           <ProductsGrid products={group.products} />

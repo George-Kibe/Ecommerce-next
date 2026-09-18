@@ -39,9 +39,10 @@ const ImageButtons = styled.div`
   a thicker high-contrast border *and* aria-pressed rather than colour alone.
 */
 const ImageButton = styled.button`
-  border: 2px solid ${props => (props.$active ? "#1d4ed8" : "#6b7280")};
+  border: 2px solid ${props => (props.$active ? "var(--link)" : "var(--field-line)")};
   outline-offset: 2px;
-  background: #fff;
+  background: var(--image-tile);
+  filter: brightness(var(--image-dim));
   /* Fixed thumbnail size. With only a minimum, a wide source image stretched
      the button to the full column width — as big as the main image. 64px stays
      well above the 44pt minimum hit target. */
