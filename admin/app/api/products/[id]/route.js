@@ -1,26 +1,33 @@
+import mongoose from "mongoose";
+import { NextResponse } from "next/server";
 import Product from "@/models/Product";
 import connect from "@/lib/db";
-import { NextResponse } from "next/server";
+import { withAdmin, badRequest, notFound, serverError } from "@/lib/apiGuard";
 
-export const GET = async (request, {params}) => {
-    const {id} = await params;
-    console.log(id)
-    try {
-        await connect();
-        const product = await Product.findById(id);
-        return new NextResponse(JSON.stringify(product), {status:200})
-    } catch (error) {
-        return new NextResponse("Database Error", { status:500})
-    }
-}
+export const GET = withAdmin(async (request, { params }) => {
+  const { id } = await params;
+  if (!mongoose.isValidObjectId(id)) return badRequest("Invalid product id");
 
-export const DELETE = async (request, {params}) => {
-    const {id} = await params;
-    try {
-        await connect();
-        await Product.findByIdAndDelete(id);
-        return new NextResponse("Product has been deleted!", {status:200})
-    } catch (error) {
-        return new NextResponse("Internal Server Error", { status:500})
-    }
-}
+  try {
+    await connect();
+    const product = await Product.findById(id);
+    if (!product) return notFound("No product with that id");
+    return NextResponse.json(product);
+  } catch (error) {
+    return serverError(error, "GET /api/products/[id]");
+  }
+});
+
+export const DELETE = withAdmin(async (request, { params }) => {
+  const { id } = await params;
+  if (!mongoose.isValidObjectId(id)) return badRequest("Invalid product id");
+
+  try {
+    await connect();
+    const deleted = await Product.findByIdAndDelete(id);
+    if (!deleted) return notFound("No product with that id");
+    return NextResponse.json({ message: "Product has been deleted" });
+  } catch (error) {
+    return serverError(error, "DELETE /api/products/[id]");
+  }
+});

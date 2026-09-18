@@ -1,39 +1,50 @@
-import { getServerSession } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/lib/mongodb";
 
-const adminEmails = [
-  "georgekibew@gmail.com",
-  "georgekibewambui@gmail.com",
-  "gyjoyouspatel@gmail.com",
-];
+/**
+ * Who is allowed into the admin. Set ADMIN_EMAILS as a comma-separated list.
+ * Anyone not on the list is rejected at sign-in, before a session is issued.
+ */
+export const adminEmails = (process.env.ADMIN_EMAILS || "")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
 
-export const authOptions = {
+if (adminEmails.length === 0) {
+  throw new Error(
+    "ADMIN_EMAILS is not set — refusing to start with an empty admin allowlist."
+  );
+}
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
-    GoogleProvider({
+    Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  adapter: MongoDBAdapter(clientPromise),
-  pages: {
-    error: "/",
-  },
+  session: { strategy: "database" },
+  pages: { error: "/" },
   callbacks: {
-    session: ({ session, token, user }) => {
-      if (adminEmails.includes(session?.user?.email)) {
-        return session;
-      } else {
-        return false;
-      }
+    /**
+     * Reject non-admins here rather than in the session callback: this refuses
+     * the sign-in outright instead of issuing a session we later have to
+     * special-case.
+     */
+    signIn({ user }) {
+      return adminEmails.includes(user?.email?.toLowerCase());
+    },
+    session({ session }) {
+      return session;
     },
   },
-};
+});
 
-export async function isAdminRequest() {
-  const session = await getServerSession(authOptions);
-  if (!adminEmails.includes(session?.user?.email)) {
-    throw Error("Not an admin!");
-  }
+/** True when the caller holds a valid session for an allowlisted admin. */
+export async function isAdmin() {
+  const session = await auth();
+  return adminEmails.includes(session?.user?.email?.toLowerCase());
 }

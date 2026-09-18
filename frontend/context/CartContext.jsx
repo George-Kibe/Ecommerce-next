@@ -1,50 +1,86 @@
 "use client"
-import {createContext, useEffect, useState} from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
 
 export const CartContext = createContext({});
 
-export function CartContextProvider({children}) {
-  const ls = typeof window !== "undefined" ? window.localStorage : null;
-  const [cartProducts,setCartProducts] = useState([]);
-  
+const STORAGE_KEY = "cart";
+
+function readCart() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    // Private mode, blocked storage, or corrupt JSON — start from an empty cart.
+    return [];
+  }
+}
+
+export function CartContextProvider({ children }) {
+  const [cartProducts, setCartProducts] = useState([]);
+  // Tracks whether the stored cart has been loaded, so the first render (which
+  // must match the server's empty cart) doesn't overwrite storage.
+  const hydrated = useRef(false);
+
   useEffect(() => {
-    if (cartProducts?.length > 0) {
-      ls?.setItem('cart', JSON.stringify(cartProducts));
+    // localStorage is unavailable during SSR, so this can only run after mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCartProducts(readCart());
+    hydrated.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated.current) return;
+    try {
+      // Persist unconditionally: the old code skipped empty carts, so clearing
+      // the cart left the previous contents in storage to reappear on reload.
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cartProducts));
+    } catch {
+      // Storage full or blocked — the in-memory cart still works.
     }
   }, [cartProducts]);
-  useEffect(() => {
-    if (ls && ls.getItem('cart')) {
-      setCartProducts(JSON.parse(ls.getItem('cart')));
-    }
-  }, []);
-  function addProduct(product) {
-    const existingProduct = cartProducts.find((p) => p._id === product._id)
-    if(existingProduct){
-      const newCartProducts = cartProducts.filter(p => p._id !== product._id)
-      existingProduct["quantity"] = existingProduct.quantity+1
-      setCartProducts([existingProduct, ...newCartProducts]);
-    }else{
-      product["quantity"] = 1
-      setCartProducts(prev => [...prev,product]);
-    }    
-  }
-  function removeQuantity(product) {
-    const existingProduct = cartProducts.find((p) => p._id === product._id)
-    const newCartProducts = cartProducts.filter(p => p._id !== product._id) 
-    existingProduct["quantity"] = existingProduct.quantity - 1
-    setCartProducts([existingProduct,...newCartProducts]);
-  }
 
-  function removeProduct(product) {
-    const newCartProducts = cartProducts.filter(p => p._id !== product._id)
-    setCartProducts(newCartProducts)
-  }
-  function clearCart() {
-    setCartProducts([]);
-  }
+  const addProduct = useCallback((product) => {
+    setCartProducts((prev) => {
+      const existing = prev.find((p) => p._id === product._id);
+      if (existing) {
+        // Replace in place so the cart keeps a stable order.
+        return prev.map((p) =>
+          p._id === product._id ? { ...p, quantity: (p.quantity ?? 0) + 1 } : p
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+  }, []);
+
+  const removeQuantity = useCallback((product) => {
+    setCartProducts((prev) =>
+      prev
+        .map((p) =>
+          p._id === product._id ? { ...p, quantity: (p.quantity ?? 0) - 1 } : p
+        )
+        .filter((p) => p.quantity > 0)
+    );
+  }, []);
+
+  const removeProduct = useCallback((product) => {
+    setCartProducts((prev) => prev.filter((p) => p._id !== product._id));
+  }, []);
+
+  const clearCart = useCallback(() => setCartProducts([]), []);
+
   return (
-    <CartContext.Provider value={{cartProducts,setCartProducts,addProduct, removeQuantity,removeProduct,clearCart}}>
-      {children}   
+    <CartContext.Provider
+      value={{
+        cartProducts,
+        setCartProducts,
+        addProduct,
+        removeQuantity,
+        removeProduct,
+        clearCart,
+      }}
+    >
+      {children}
     </CartContext.Provider>
   );
 }

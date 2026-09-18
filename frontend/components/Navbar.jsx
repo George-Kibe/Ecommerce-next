@@ -1,23 +1,39 @@
 "use client"
 import { CartContext } from '@/context/CartContext';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import React, { useContext, useState } from 'react'
 
-const CustomLink = ({href,name, items, toggle}) => {
+/*
+  This was a <button> carrying an `href` prop (invalid, and React warns) that
+  navigated via router.push. That meant no middle-click, no open-in-new-tab, no
+  link semantics for assistive tech. It's a real link now, with the current page
+  marked by aria-current rather than colour alone, and the cart count given a
+  spoken label instead of a bare number.
+*/
+const CustomLink = ({href, name, items, toggle}) => {
   const pathname = usePathname();
-  const inActiveLink = "relative py-2 px-2 text-gray-400 font-semibold hover:text-green-500 transition duration-300"
-  const activeLink = "relative py-2 px-2 text-green-500 font-semibold"
-  const router = useRouter();
-  const handleClick = () => {
-    toggle()
-    router.push(href)
-  }
+  const isActive = pathname === href;
+  const base = "relative flex items-center min-h-11 py-2 px-2 font-semibold transition duration-300";
+  const tone = isActive
+    ? "text-green-400"
+    : "text-gray-300 hover:text-green-400";
+
   return(
-    <button onClick={handleClick} href={href} className={pathname === href? activeLink : inActiveLink}>
-     <p className="text-xl ml-2 text-start">{name}</p>
-      {items > 0 && <div className="absolute top-0 left-16 px-2 text-emerald-600 rounded-full bg-white">{items}</div> }
-    </button>
+    <Link
+      href={href}
+      onClick={toggle}
+      aria-current={isActive ? "page" : undefined}
+      className={`${base} ${tone}`}
+    >
+      <span className="text-xl ml-2 text-start">{name}</span>
+      {items > 0 && (
+        <span className="absolute top-0 left-16 px-2 text-emerald-700 rounded-full bg-white">
+          <span aria-hidden="true">{items}</span>
+          <span className="sr-only">{`${items} item${items === 1 ? "" : "s"} in cart`}</span>
+        </span>
+      )}
+    </Link>
   )
 }
 
@@ -34,7 +50,7 @@ const Navbar = () => {
             <div className="flex justify-between">
                 <div className="flex space-x-2 justify-between flex-1">
                     <div>
-                        <Link href="#" className="flex items-center border- py-4 px-2">
+                        <Link href="/" className="flex items-center py-4 px-2">
                             <span className="font-semibold text-white text-2xl">Ecommerce</span>
                         </Link>
                     </div>                  
@@ -47,16 +63,21 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div className="md:hidden flex items-center">
-                    <button onClick={handleClick} className="outline-none">
-                    <svg className=" w-6 h-6 text-gray-500 hover:text-green-500 "
-                        x-show="!showMenu"
+                    {/* `outline-none` removed the only focus indicator, and
+                        `x-show` was a leftover Alpine.js attribute React
+                        doesn't understand. */}
+                    <button onClick={handleClick}
+                        aria-label={showMobileNav ? "Close menu" : "Open menu"}
+                        aria-expanded={showMobileNav}
+                        className="min-w-11 min-h-11 inline-flex items-center justify-center">
+                    <svg className=" w-6 h-6 text-gray-300 hover:text-green-500 "
                         fill="none"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                    >
+                     aria-hidden="true">
                         <path d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>

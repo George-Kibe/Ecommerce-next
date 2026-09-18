@@ -1,6 +1,5 @@
 "use client"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import Center from "./Center";
 import Title from "./Title";
 import styled from "styled-components";
@@ -39,7 +38,6 @@ export default  function DetailedProduct({product}) {
   }
   return (
     <>
-    <ToastContainer />
       <Center>
         <ColWrapper>
           <WhiteBox>

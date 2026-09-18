@@ -1,52 +1,80 @@
-import Category from "@/models/Category";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
+import Category from "@/models/Category";
 import connect from "@/lib/db";
+import { withAdmin, badRequest, notFound, serverError } from "@/lib/apiGuard";
 
-async function handler(req,res){
-    const {method} = req;
+const normaliseProperties = (properties) =>
+  Array.isArray(properties)
+    ? properties
+        .filter((p) => p?.name?.trim())
+        .map((p) => ({
+          name: String(p.name).trim(),
+          values: Array.isArray(p.values) ? p.values : [],
+        }))
+    : [];
+
+export const GET = withAdmin(async () => {
+  try {
     await connect();
+    const categories = await Category.find().populate("parentCategory");
+    return NextResponse.json(categories);
+  } catch (error) {
+    return serverError(error, "GET /api/categories");
+  }
+});
 
-    if (method === "GET"){
-        const url = new URL(req.url);
-        const id = url.searchParams.get("id")
-        const category = await  Category.find().populate("parentCategory")
-        const categories = JSON.stringify(category)
-        // console.log(allProducts)
-        return new NextResponse(categories, {status: 200})
-      }   
-    
-    if (method === "POST"){
-        const body = await req.json()
-        const {name, parentCategory, properties} = body;
-        console.log(body)
-        try {
-            if (parentCategory){
-                const newCategory = new Category({name, parentCategory, properties})
-                const response = await newCategory.save();
-                return new NextResponse(response, {status: 201})
-            }
-            const newCategory = new Category({name, properties})
-            const response = await newCategory.save();
-            return new NextResponse(response, {status: 201})
-        } catch (error) {
-            console.log("Category saving error: ", error.message)
-            return new NextResponse(error.message, {status: 422})
-        }      
+export const POST = withAdmin(async (req) => {
+  try {
+    const { name, parentCategory, properties } = await req.json();
+
+    if (!name?.trim()) return badRequest("Category name is required");
+    if (parentCategory && !mongoose.isValidObjectId(parentCategory)) {
+      return badRequest("Invalid parent category id");
     }
-    if (method === "PUT"){
-        const body = await req.json()
-        const {_id, name, parentCategory, properties} = body;
-        try {
-            if (parentCategory){
-                const response = await Category.updateOne({_id:_id}, {name, parentCategory, properties})
-                return new NextResponse("Category has been Updated", {status: 200})
-            }
-            await Category.updateOne({_id}, {name, properties})
-            return new NextResponse("Category has been Updated", {status: 200})
-        } catch (error) {
-            return new NextResponse(error.message, {status: 422})
-        }      
-    }     
-}
 
-export { handler as GET, handler as POST, handler as PUT };
+    await connect();
+    const category = await Category.create({
+      name: name.trim(),
+      parentCategory: parentCategory || undefined,
+      properties: normaliseProperties(properties),
+    });
+
+    // Return JSON rather than passing the Mongoose document straight to
+    // NextResponse, which used to serialise it as an inspected object string.
+    return NextResponse.json(category, { status: 201 });
+  } catch (error) {
+    return serverError(error, "POST /api/categories");
+  }
+});
+
+export const PUT = withAdmin(async (req) => {
+  try {
+    const { _id, name, parentCategory, properties } = await req.json();
+
+    if (!mongoose.isValidObjectId(_id)) return badRequest("Invalid category id");
+    if (!name?.trim()) return badRequest("Category name is required");
+    if (parentCategory && !mongoose.isValidObjectId(parentCategory)) {
+      return badRequest("Invalid parent category id");
+    }
+    if (parentCategory && String(parentCategory) === String(_id)) {
+      return badRequest("A category cannot be its own parent");
+    }
+
+    await connect();
+    const updated = await Category.findByIdAndUpdate(
+      _id,
+      {
+        name: name.trim(),
+        parentCategory: parentCategory || undefined,
+        properties: normaliseProperties(properties),
+      },
+      { new: true }
+    );
+
+    if (!updated) return notFound("No category with that id");
+    return NextResponse.json(updated);
+  } catch (error) {
+    return serverError(error, "PUT /api/categories");
+  }
+});

@@ -4,14 +4,25 @@ import {primary} from "@/lib/colors";
 
 export const ButtonStyle = css`
   border:0;
-  padding: 5px 15px;
+  /*
+    Was 5px/15px, giving a ~34px tall control. The HIG minimum control size is
+    44x44pt on iOS/iPadOS/watchOS, so these are sized to match — controls that
+    are too small are hard for many people to hit accurately.
+  */
+  padding: 10px 18px;
+  min-height: 44px;
   border-radius: 5px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
   font-family: 'Poppins', sans-serif;
   font-weight:500;
+  &:disabled{
+    opacity: .5;
+    cursor: not-allowed;
+  }
   svg{
     height: 16px;
     margin-right: 5px;

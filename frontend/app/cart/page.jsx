@@ -1,6 +1,5 @@
 "use client"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import styled from "styled-components";
 import Center from "@/components/Center";
 import Button from "@/components/Button";
@@ -10,6 +9,7 @@ import axios from "axios";
 import Table from "@/components/Table";
 import Input from "@/components/Input";
 import DeleteIcon from "@/components/icons/DeleteIcon";
+import Image from "next/image";
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -79,47 +79,57 @@ export default function CartPage() {
   const [streetAddress,setStreetAddress] = useState('');
   const [country,setCountry] = useState('');
   const [isSuccess,setIsSuccess] = useState(false);
-  // console.log(cartProducts)
+  const [isPaying,setIsPaying] = useState(false);
+
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    if (window?.location.href.includes('success')) {
+    if (typeof window === 'undefined') return;
+    // Parse the query string rather than substring-matching the whole URL,
+    // which also matched any product or host containing "success".
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === '1') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSuccess(true);
       clearCart();
       toast.success("Thank you for shopping with us");
     }
-  }, []);
+  }, [clearCart]);
+
   function moreOfThisProduct(product) {
     addProduct(product);
   }
   function lessOfThisProduct(product) {
-    if (product.quantity === 1 | product.quantity < 1){
+    // `|` here was bitwise OR, not logical.
+    if (product.quantity <= 1) {
       removeProduct(product);
-    }else{
-      removeQuantity(product)
+    } else {
+      removeQuantity(product);
     }
-    
   }
   async function goToPayment() {
-    if(!name|!email|!city|!streetAddress|!country|!cartProducts.length){
+    if (!name || !email || !city || !streetAddress || !country || !cartProducts.length) {
       toast.error("You have missing necessary details");
       return
     }
+    if (isPaying) return;
+    setIsPaying(true);
     toast.info("Processing Your Payment")
     try {
+      // Only ids and quantities are sent; the server prices the order from the
+      // database, so nothing here can influence what the customer is charged.
       const response = await axios.post('/api/checkout', {
         name,email,city,postalCode,streetAddress,country,
-        cartProducts,
+        cartProducts: cartProducts.map(({_id, quantity}) => ({_id, quantity})),
       });
-      console.log("Checkout Response: ", response)
       if (response.data.url) {
         window.location = response.data.url;
+        return;
       }
-    } catch (error) {
-      console.log(error.message)
       toast.error("Your order has not been processed. Try Again")
-    }    
+      setIsPaying(false);
+    } catch (error) {
+      toast.error(error.response?.data?.error ?? "Your order has not been processed. Try Again")
+      setIsPaying(false);
+    }
   }
 
   const total = cartProducts.reduce(
@@ -144,7 +154,6 @@ export default function CartPage() {
   }
   return (
     <>
-      <ToastContainer /> 
       <Center>
         <ColumnsWrapper>
           <Box>
@@ -166,20 +175,37 @@ export default function CartPage() {
                     <tr key={product._id}>
                       <ProductInfoCell>
                         <ProductImageBox>
-                          <img src={product.images[0]} alt=""/>
+                          {product.images?.[0] && (
+                            <Image src={product.images[0]} alt={product.title}
+                                   width={80} height={80}
+                                   className="object-contain" />
+                          )}
                         </ProductImageBox>
                         {product.title}
                       </ProductInfoCell>
                       <td>
-                        <div className="flex item-center">
-                          <button className="p-1 px-2 rounded-lg bg-blue-200"
+                        {/*
+                          These were ~32x24px with no accessible name. Sized to
+                          the 44pt HIG minimum, spaced apart so they're not
+                          easily mis-tapped, and labelled for screen readers —
+                          a bare "+" or "-" glyph tells VoiceOver nothing about
+                          what it does or which product it affects.
+                        */}
+                        <div className="flex items-center gap-2">
+                          <button type="button"
+                            className="min-w-11 min-h-11 inline-flex items-center justify-center rounded-lg bg-blue-200 text-lg font-medium"
+                            aria-label={product.quantity < 2
+                              ? `Remove ${product.title} from cart`
+                              : `Decrease quantity of ${product.title}`}
                             onClick={() => lessOfThisProduct(product)}>
-                              { product.quantity < 2 ? <DeleteIcon /> :"-" }
+                              { product.quantity < 2 ? <DeleteIcon /> : "−" }
                             </button>
-                          <QuantityLabel>
+                          <QuantityLabel aria-live="polite">
                             {product.quantity}
                           </QuantityLabel>
-                          <button className="p-1 px-2 rounded-lg bg-blue-200"
+                          <button type="button"
+                            className="min-w-11 min-h-11 inline-flex items-center justify-center rounded-lg bg-blue-200 text-lg font-medium"
+                            aria-label={`Increase quantity of ${product.title}`}
                             onClick={() => moreOfThisProduct(product)}>+</button>
                         </div>
                       </td>
@@ -233,8 +259,9 @@ export default function CartPage() {
                      name="country"
                      onChange={ev => setCountry(ev.target.value)}/>
               <Button black={1} block={1}
+                      disabled={isPaying}
                       onClick={goToPayment}>
-                Continue to payment
+                {isPaying ? "Redirecting…" : "Continue to payment"}
               </Button>
             </Box>
           )}

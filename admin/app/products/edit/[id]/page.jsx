@@ -1,37 +1,32 @@
-"use client"
-import axios from 'axios';
-import 'react-toastify/dist/ReactToastify.css';
-import React, { use, useEffect, useState } from 'react'
-import ProductForm from '@/components/ProductForm';
+import mongoose from 'mongoose'
+import { notFound } from 'next/navigation'
+import connect from '@/lib/db'
+import Product from '@/models/Product'
+import Category from '@/models/Category'
+import requireAdmin from '@/lib/requireAdmin'
+import ProductForm from '@/components/ProductForm'
 
-const EditProductData = ({params}) => {
-  const [productData, setProductData] = useState(null)
-  // Next 16 passes `params` as a promise; client components unwrap it with use().
-  const {id} = use(params);
-  const getProduct = async() => {
-    try {
-      const response = await axios.get(`/api/products?id=${id}`)
-      setProductData(response.data)
-    } catch (error) {
-      toast.error("Product not found: 404")
-    }
-  }
+export const metadata = { title: 'Edit product — Admin' }
+export const dynamic = 'force-dynamic'
 
-  useEffect(() => {
-    if(!id){return}
-    getProduct()
-  }, [id])  
+export default async function EditProductPage({ params }) {
+  await requireAdmin()
 
-  if (!productData){
-    return(
-      <div className="w-full h-full px-2 p-4">
-        <p className="text-center">Loading...</p>  
-      </div>      
-    )
-  } 
+  const { id } = await params
+  if (!mongoose.isValidObjectId(id)) notFound()
+
+  await connect()
+  const [product, categories] = await Promise.all([
+    Product.findById(id),
+    Category.find().populate('parentCategory'),
+  ])
+
+  if (!product) notFound()
+
   return (
-    <ProductForm {...productData} />
+    <ProductForm
+      {...JSON.parse(JSON.stringify(product))}
+      categories={JSON.parse(JSON.stringify(categories))}
+    />
   )
 }
-
-export default EditProductData

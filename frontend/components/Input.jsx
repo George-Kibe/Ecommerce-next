@@ -1,13 +1,20 @@
 "use client"
 import styled from "styled-components";
 
+/*
+  Padding raised from 5px so the field meets the 44pt minimum control size, and
+  the border darkened from #ccc (1.6:1) to gray-400 so the field boundary is
+  actually visible against a white panel.
+*/
 const StyledInput = styled.input`
   width: 100%;
-  padding: 5px;
-  margin-bottom: 5px;
-  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 44px;
+  margin-bottom: 8px;
+  border: 1px solid #6b7280;
   border-radius: 5px;
-  box-sizing:border-box;
+  box-sizing: border-box;
+  font-size: 1rem;
 `;
 
 export default function Input(props) {

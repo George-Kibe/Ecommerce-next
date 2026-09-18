@@ -1,32 +1,51 @@
+import mongoose from 'mongoose'
 import Featured from '@/components/Featured'
 import NewProducts from '@/components/NewProducts'
 import connect from '@/lib/db'
 import Product from '@/models/Product'
 
-async function getFeaturedProductDetails(id) {
+/**
+ * The featured product is chosen by FEATURED_PRODUCT_ID when set, otherwise it
+ * falls back to the newest product. Previously this was a hardcoded id, so the
+ * whole build failed if that document was ever deleted.
+ */
+async function getFeaturedProduct() {
   await connect()
-  // const ids = req.body.ids;
-  // res.json(await Product.find({_id:ids}));
-  const response = await Product.findById(id);
-  const productData = JSON.parse(JSON.stringify(response))
-  return productData
+  const id = process.env.FEATURED_PRODUCT_ID
+
+  if (id && mongoose.isValidObjectId(id)) {
+    const featured = await Product.findById(id)
+    if (featured) return JSON.parse(JSON.stringify(featured))
+  }
+
+  const newest = await Product.findOne({}, null, { sort: { _id: -1 } })
+  return newest ? JSON.parse(JSON.stringify(newest)) : null
 }
 
 async function getLatestProducts() {
   await connect()
-  const response = await Product.find({}, null, {sort: {"_id": -1}, limit:10})
-  const productsData = JSON.parse(JSON.stringify(response))
-  return productsData
+  const response = await Product.find({}, null, { sort: { _id: -1 }, limit: 10 })
+  return JSON.parse(JSON.stringify(response))
 }
 
+// Product data changes independently of deploys; re-render at most once a minute.
+export const revalidate = 60
 
 export default async function Home() {
-  const product = await getFeaturedProductDetails("6495b282df662ccaa8441082")
-  const latestProducts = await getLatestProducts()
-  // console.log(latestProducts)
+  const [product, latestProducts] = await Promise.all([
+    getFeaturedProduct(),
+    getLatestProducts(),
+  ])
+
   return (
     <main className="w-full h-full">
-      <Featured product={product}/>
+      {product && <Featured product={product} />}
+      {!product && (
+        <div className="p-8 text-center">
+          <h1 className="text-2xl font-semibold">Our store is getting ready</h1>
+          <p className="mt-2">Products will appear here shortly.</p>
+        </div>
+      )}
       <NewProducts products={latestProducts} />
     </main>
   )

@@ -1,39 +1,42 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+const MAX_BYTES = 5 * 1024 * 1024; // keep in sync with /api/upload-url
 
-const AWS_ACCESS_KEY_ID=process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
-const AWS_SECRET_ACCESS_KEY=process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
-const AWS_S3_REGION=process.env.NEXT_PUBLIC_AWS_S3_REGION
-const S3_BUCKET_NAME=process.env.NEXT_PUBLIC_S3_BUCKET_NAME
+/**
+ * Uploads one image to S3 via a short-lived presigned URL.
+ *
+ * The browser never holds AWS credentials: it asks our (admin-only) API for a
+ * presigned PUT, then sends the bytes straight to S3.
+ *
+ * @returns {Promise<string>} the public URL of the uploaded object
+ */
+export default async function uploadImageToS3(file) {
+  if (!file) throw new Error("No file provided");
 
-// Upload an image file to S3
-async function uploadImageToS3(file, ext) {
-  const s3Client = new S3Client({
-    region: AWS_S3_REGION,
-    credentials: {
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    },
+  if (file.size > MAX_BYTES) {
+    throw new Error("Image is larger than the 5MB limit");
+  }
+
+  const presignResponse = await fetch("/api/upload-url", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ contentType: file.type, size: file.size }),
   });
 
-  // Generate a unique key for the uploaded image
-  const fileName = `${Date.now()}.${ext}`;
-
-  // Prepare the parameters for the S3 upload
-  const uploadParams = {
-    Bucket: S3_BUCKET_NAME,
-    Key: fileName,
-    Body: file,
-  };
-
-  try {
-    // Execute the upload command
-    const command = new PutObjectCommand(uploadParams);
-    const response = await s3Client.send(command);
-    return `https://mernbnb-images-bucket.s3.amazonaws.com/${fileName}`
-  } catch (error) {
-    console.error("Error uploading image to S3:", error);
-    throw error;
+  if (!presignResponse.ok) {
+    const { error } = await presignResponse.json().catch(() => ({}));
+    throw new Error(error || "Could not prepare the upload");
   }
-}
 
-export default uploadImageToS3;
+  const { uploadUrl, url } = await presignResponse.json();
+
+  const uploadResponse = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error("Upload to storage failed");
+  }
+
+  return url;
+}
