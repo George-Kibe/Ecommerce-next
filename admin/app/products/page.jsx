@@ -4,7 +4,7 @@ import Product from '@/models/Product'
 import requireAdmin from '@/lib/requireAdmin'
 import ProductsTable from '@/components/ProductsTable'
 
-export const metadata = { title: 'Products — Admin' }
+export const metadata = { title: 'Products' }
 export const dynamic = 'force-dynamic'
 
 async function getProducts() {

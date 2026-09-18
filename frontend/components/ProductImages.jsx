@@ -3,12 +3,23 @@ import styled from "styled-components";
 import {useState} from "react";
 
 const Thumb = styled.img`
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
+/*
+  Was capped at 200px tall, so the main shot ended up smaller than its own
+  thumbnails. A fixed height is wrong here too: a wide product in a tall box
+  letterboxes with large empty bands above and below. Natural height with a cap
+  lets the box track the image, and `contain` keeps tall images inside it.
+*/
 const BigImage = styled.img`
-  max-width: 100%;
-  max-height: 200px;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: contain;
+  margin: 0 auto;
 `;
 const ImageButtons = styled.div`
   display: flex;
@@ -31,8 +42,12 @@ const ImageButton = styled.button`
   border: 2px solid ${props => (props.$active ? "#1d4ed8" : "#6b7280")};
   outline-offset: 2px;
   background: #fff;
-  min-width: 44px;
-  min-height: 44px;
+  /* Fixed thumbnail size. With only a minimum, a wide source image stretched
+     the button to the full column width — as big as the main image. 64px stays
+     well above the 44pt minimum hit target. */
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;

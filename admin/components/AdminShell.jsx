@@ -24,7 +24,16 @@ export default function AdminShell({ children }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
           </svg>
         </button>
-        {children}
+        {/*
+          min-w-0 is the fix for tables being clipped on phones. A flex child
+          defaults to `min-width: auto`, so a wide table forced this column
+          wider than the screen and the overflow was cut off — the Edit/Delete
+          column was simply unreachable at 320–390px. With min-w-0 the column
+          stays within the viewport and the tables scroll inside it instead.
+        */}
+        <div className="min-w-0 flex-1 overflow-y-auto">
+          {children}
+        </div>
       </div>
     </div>
   )

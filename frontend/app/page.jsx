@@ -38,7 +38,8 @@ export default async function Home() {
   ])
 
   return (
-    <main className="w-full h-full">
+    // The root layout supplies <main>; this is just the page wrapper.
+    <div className="w-full h-full">
       {product && <Featured product={product} />}
       {!product && (
         <div className="p-8 text-center">
@@ -47,6 +48,6 @@ export default async function Home() {
         </div>
       )}
       <NewProducts products={latestProducts} />
-    </main>
+    </div>
   )
 }

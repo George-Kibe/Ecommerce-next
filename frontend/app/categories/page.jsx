@@ -1,8 +1,19 @@
-import Center from "@/components/Center";
 import Product from "@/models/Product";
 import ProductsGrid from "@/components/ProductsGrid";
 import connect from "@/lib/db";
 import Category from "@/models/Category";
+import { BRAND } from "@/lib/brand";
+
+export const metadata = {
+  title: "Shop by Category",
+  description: `Browse products by category at ${BRAND.name}.`,
+  alternates: { canonical: "/categories" },
+  openGraph: {
+    title: `Shop by Category | ${BRAND.name}`,
+    description: `Browse products by category at ${BRAND.name}.`,
+    url: "/categories",
+  },
+};
 
 export const revalidate = 60;
 
@@ -44,21 +55,21 @@ export default async function CategoriesPage() {
   const groups = await getProductsByCategory();
 
   return (
-    <Center>
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-10">
+      <h1 className="mb-6 text-center text-2xl font-semibold text-gray-900 md:text-3xl">
+        Shop by Category
+      </h1>
       {groups.length === 0 && (
         <p className="p-8 text-center">No products yet.</p>
       )}
       {groups.map((group) => (
-        <div
-          key={group.id}
-          className="p-2 md:px-4 lg:px-8 flex flex-col items-center"
-        >
-          <h2 className="font-semibold text-justify text-[24px] md:text-[30px] mb-2 md:mb-4">
+        <section key={group.id} className="mb-10 last:mb-0">
+          <h2 className="mb-3 text-xl font-semibold text-gray-900 md:mb-4 md:text-2xl">
             {group.name}
           </h2>
           <ProductsGrid products={group.products} />
-        </div>
+        </section>
       ))}
-    </Center>
+    </div>
   );
 }

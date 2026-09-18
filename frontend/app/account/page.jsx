@@ -4,6 +4,9 @@ import Center from "@/components/Center";
 export const metadata = {
   title: "Account",
   description: "Your orders and account details",
+  // Per-visitor page with nothing to rank for.
+  robots: { index: false, follow: true },
+  alternates: { canonical: "/account" },
 };
 
 export default function AccountPage() {

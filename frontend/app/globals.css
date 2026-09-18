@@ -17,18 +17,24 @@
   }
 
   /*
-    The interface uses `dark:` variants on cards, the footer and the featured
-    panel. Without a matching dark page background those surfaces went dark
-    while the page stayed light grey. Define the page colours for both
-    appearances so contrast holds either way.
-    HIG, Accessibility: "If your app supports Dark Mode, make sure to check the
-    minimum contrast in both light and dark appearances."
+    This is a light interface: light grey page, white cards, dark text.
+
+    It previously carried scattered `dark:` variants (copied in with the card
+    markup) that only ever covered the cards, the footer and two buttons —
+    never the page, the navbar, or any of the styled-components, which use
+    hardcoded light colours like `whitesmoke`. In system dark mode that
+    produced dark cards on a light page with near-white body text: unreadable.
+
+    Rather than half a dark theme, the palette is now light in both
+    appearances. A real dark mode means theming the styled-components too,
+    which is a separate change.
   */
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-color: var(--color-gray-900);
-      color: var(--color-gray-100);
-    }
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    color: var(--color-gray-900);
   }
 
   /*

@@ -5,7 +5,7 @@ import Product from '@/models/Product'
 import requireAdmin from '@/lib/requireAdmin'
 import DeleteProductConfirm from '@/components/DeleteProductConfirm'
 
-export const metadata = { title: 'Delete product — Admin' }
+export const metadata = { title: 'Delete product' }
 export const dynamic = 'force-dynamic'
 
 export default async function DeleteProductPage({ params }) {

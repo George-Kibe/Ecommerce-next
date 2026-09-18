@@ -3,6 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
+import { BRAND } from '@/lib/brand'
 
 const Navbar = ({show}) => {
   const inactiveLink = 'flex text-[20px] font-semibold items-center gap-1 p-1';
@@ -15,8 +16,9 @@ const Navbar = ({show}) => {
   return (
     <aside className={`p-4 left-8 top-2 absolute w-[60%] h-[80%] text-white bg-blue-900 sm:static rounded-md sm:h-full
        ${show? "":"hidden -left-full"} md:w-auto`}>
-      <Link href="/" className="flex gap-1 mb-4 mr-4">
-        <h1 className="text-[22px] font-semibold">Admin Section</h1>
+      <Link href="/" className="flex flex-col gap-1 mb-4 mr-4">
+        <span className="text-[22px] font-semibold leading-tight">{BRAND.name}</span>
+        <span className="text-sm text-blue-200">Admin</span>
       </Link>
       {
         session.status === "authenticated" && (      

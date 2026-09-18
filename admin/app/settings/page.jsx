@@ -22,7 +22,7 @@ async function getStats() {
   return { products, categories, orders, paidOrders };
 }
 
-export const metadata = { title: "Settings — Admin" };
+export const metadata = { title: "Settings" };
 // Counts must reflect the database at request time, not at build time.
 export const dynamic = "force-dynamic";
 

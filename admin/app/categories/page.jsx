@@ -3,7 +3,7 @@ import Category from '@/models/Category';
 import requireAdmin from '@/lib/requireAdmin';
 import CategoriesManager from '@/components/CategoriesManager';
 
-export const metadata = { title: 'Categories — Admin' };
+export const metadata = { title: 'Categories' };
 export const dynamic = 'force-dynamic';
 
 export default async function CategoriesPage() {

@@ -8,7 +8,7 @@ async function getAllOrders() {
   return JSON.parse(JSON.stringify(response));
 }
 
-export const metadata = { title: "Orders — Admin" };
+export const metadata = { title: "Orders" };
 // Orders change constantly; never serve a build-time snapshot.
 export const dynamic = "force-dynamic";
 
@@ -24,7 +24,8 @@ export default async function OrdersPage() {
       {orders.length === 0 && <p>No orders yet.</p>}
 
       {orders.length > 0 && (
-        <table className="border border-gray-400 w-full">
+        <div className="mt-4 w-full overflow-x-auto rounded-md bg-white">
+        <table className="border border-gray-400 w-full min-w-[36rem] bg-white">
           <thead className="bg-blue-100">
             <tr>
               <th className="border border-gray-400 p-1 text-left">Date</th>
@@ -78,6 +79,7 @@ export default async function OrdersPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

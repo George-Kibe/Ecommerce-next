@@ -30,12 +30,29 @@ export default async function uploadImageToS3(file) {
 
   const uploadResponse = await fetch(uploadUrl, {
     method: "PUT",
+    // `content-length` is part of the signature, and the browser sets it from
+    // the File — so the bytes sent must match the `size` declared above. They
+    // do here because both come from the same File object.
     headers: { "Content-Type": file.type },
     body: file,
   });
 
   if (!uploadResponse.ok) {
-    throw new Error("Upload to storage failed");
+    // S3 errors are XML, and a bare "failed" message makes these very hard to
+    // diagnose. 403 is almost always an expired URL (60s) or a signature
+    // mismatch; surface enough to tell them apart.
+    const detail = await uploadResponse.text().catch(() => "");
+    const code = /<Code>([^<]+)<\/Code>/.exec(detail)?.[1];
+    console.error("[upload] S3 rejected the upload:", uploadResponse.status, detail.slice(0, 300));
+
+    if (uploadResponse.status === 403) {
+      throw new Error(
+        code === "RequestTimeTooSkewed"
+          ? "Upload link expired — please try again"
+          : "Storage rejected the upload (check AWS credentials and bucket policy)"
+      );
+    }
+    throw new Error(`Upload to storage failed (${uploadResponse.status}${code ? `: ${code}` : ""})`);
   }
 
   return url;

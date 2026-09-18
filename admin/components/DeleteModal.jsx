@@ -33,20 +33,27 @@ const Modal = ({ isOpen, categoryToDelete: category, setIsOpen, onDeleted }) => 
             Are you sure you want to delete &quot;{category?.name}&quot;?
           </p>
 
-          <div className="flex flex-row gap-4">
+          {/*
+            The roles were inverted: Cancel was red and the destructive "Yes"
+            was the prominent brand-blue primary. Someone reading red as
+            "danger" would reach for the blue button and delete the category.
+            Per the HIG, the destructive action takes the red destructive style
+            and an explicit verb, and Cancel is the neutral, safe choice.
+          */}
+          <div className="flex flex-row flex-wrap justify-center gap-4">
             <button
               onClick={() => setIsOpen(false)}
               disabled={isDeleting}
-              className="bg-red-500 p-2 flex flex-row gap-1 rounded-xl text-white disabled:opacity-50"
+              className="min-h-11 rounded-xl border-2 border-gray-400 bg-white px-5 font-medium text-gray-900 hover:bg-gray-100 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={deleteCategory}
               disabled={isDeleting}
-              className="bg-blue-900 p-2 px-4 flex flex-row gap-1 rounded-xl text-white disabled:opacity-50"
+              className="min-h-11 rounded-xl bg-red-700 px-5 font-medium text-white hover:bg-red-800 disabled:opacity-50"
             >
-              {isDeleting ? "Deleting…" : "Yes"}
+              {isDeleting ? "Deleting…" : "Delete"}
             </button>
           </div>
         </div>

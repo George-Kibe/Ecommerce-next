@@ -6,7 +6,7 @@ import Category from '@/models/Category'
 import requireAdmin from '@/lib/requireAdmin'
 import ProductForm from '@/components/ProductForm'
 
-export const metadata = { title: 'Edit product — Admin' }
+export const metadata = { title: 'Edit product' }
 export const dynamic = 'force-dynamic'
 
 export default async function EditProductPage({ params }) {

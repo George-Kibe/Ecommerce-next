@@ -2,11 +2,15 @@
 
 import ProductsGrid from "@/components/ProductsGrid";
 
-export default function NewProducts({products}) {
+export default function NewProducts({ products }) {
+  if (!products?.length) return null;
+
   return (
-    <div className="p-2 md:p-4 lg:p-8 flex flex-col items-center justify-center">
-      <h2 className="font-semibold text-[24px] md:text-[30px] mb-2 md:mb-4">New Arrivals</h2>
+    <section className="mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-10">
+      <h2 className="mb-4 text-center text-2xl font-semibold text-gray-900 md:mb-6 md:text-3xl">
+        New Arrivals
+      </h2>
       <ProductsGrid products={products} />
-    </div>
+    </section>
   );
 }

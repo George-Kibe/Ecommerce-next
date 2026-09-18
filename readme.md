@@ -150,8 +150,66 @@ release in the v4 line.
   `Referrer-Policy`, `Permissions-Policy`, HSTS) are set on both apps;
   `X-Powered-By` is disabled and the admin sends `X-Robots-Tag: noindex`.
 
+### ⚠️ The current AWS key is compromised — rotate it
+
+Confirmed, not hypothetical. An earlier version used
+`NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY`, and the `NEXT_PUBLIC_` prefix bundles a
+value into the client JavaScript served to every visitor. AWS's automated
+scanning found the leaked key and attached the **`AWSCompromisedKeyQuarantineV2`**
+policy to the IAM user (`George_mernbnb`), which now explicitly denies
+`s3:ListBucket`, `s3:DeleteObject` and other actions.
+
+`PutObject`/`GetObject` still work, so uploads succeed — but this is a known
+leaked credential operating under an AWS quarantine.
+
+To recover:
+
+1. Create a new IAM user with a policy scoped to `s3:PutObject` and
+   `s3:GetObject` on `arn:aws:s3:::<bucket>/products/*` only.
+2. Set `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` — **never** with a
+   `NEXT_PUBLIC_` prefix; that is exactly what leaked them.
+3. Delete the old access key and remove the quarantine policy (or delete the
+   old IAM user).
+4. Review CloudTrail, the bucket contents and your AWS bill for activity you
+   don't recognise.
+
+The admin write APIs were unauthenticated in that same version, so review the
+database for unexpected changes too.
+
+## Branding and SEO
+
+Brand identity lives in one file per app, `lib/brand.js`. The logo, favicon,
+apple-icon, social card, web manifest, page titles and structured data all read
+from it — renaming the store is a one-line change, with no icon files to redraw.
+There are no static favicons; `next/og` generates them at build time.
+
+The storefront ships:
+
+- Per-page titles, descriptions and self-referencing canonicals
+- Open Graph + Twitter cards, with a generated 1200x630 social image (product
+  pages use the product photo instead)
+- JSON-LD: Organization and WebSite site-wide, Product + Offer + BreadcrumbList
+  on product pages, ItemList on the collection
+- `sitemap.xml` with change frequency and priority, and a `robots.txt` that
+  excludes the cart, account and API
+- Web manifest and theme colour for installability
+
+The admin is deliberately **excluded** from search — `Disallow: /`, `noindex,
+nofollow, nocache` and an `X-Robots-Tag` header.
+
+> **Set `PUBLIC_URL` at build time.** `robots.txt`, `sitemap.xml` and every
+> canonical URL are statically generated and bake in the value present during
+> `next build`. Setting it only as a runtime variable ships canonicals pointing
+> at `localhost`.
+
 ## Known limitations
 
+- **Currency is inconsistent.** Product cards and the cart show `Kshs.`, the
+  product page shows `$`, and checkout charges **USD**. A product priced
+  `120000` displays as "Kshs. 120,000" but bills USD 120,000. Pick the real
+  currency and align the three UI labels, the `CURRENCY` constant in
+  `app/api/checkout/route.js`, and `priceCurrency` in the product structured
+  data. **Fix this before taking real payments.**
 - `notFound()` returns HTTP 200 instead of 404 for routes nested two or more
   segments deep — Next 16.3.5 behaviour, reproducible with a bare `notFound()`
   page. The correct page renders and missing products are marked `noindex`, so

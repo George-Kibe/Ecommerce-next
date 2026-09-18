@@ -3,7 +3,7 @@ import Category from '@/models/Category';
 import requireAdmin from '@/lib/requireAdmin';
 import ProductForm from '@/components/ProductForm';
 
-export const metadata = { title: 'New product — Admin' };
+export const metadata = { title: 'New product' };
 export const dynamic = 'force-dynamic';
 
 export default async function AddNewProductPage() {

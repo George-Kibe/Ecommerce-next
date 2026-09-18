@@ -3,6 +3,8 @@ import { CartContext } from '@/context/CartContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useContext, useState } from 'react'
+import Logo from '@/components/Logo'
+import { BRAND } from '@/lib/brand'
 
 /*
   This was a <button> carrying an `href` prop (invalid, and React warns) that
@@ -14,7 +16,9 @@ import React, { useContext, useState } from 'react'
 const CustomLink = ({href, name, items, toggle}) => {
   const pathname = usePathname();
   const isActive = pathname === href;
-  const base = "relative flex items-center min-h-11 py-2 px-2 font-semibold transition duration-300";
+  // Sizes down at md so five links plus the wordmark fit on a tablet without
+  // wrapping onto a second line, then back up at lg.
+  const base = "relative flex items-center min-h-11 py-2 px-2 font-semibold whitespace-nowrap transition duration-300";
   const tone = isActive
     ? "text-green-400"
     : "text-gray-300 hover:text-green-400";
@@ -26,7 +30,7 @@ const CustomLink = ({href, name, items, toggle}) => {
       aria-current={isActive ? "page" : undefined}
       className={`${base} ${tone}`}
     >
-      <span className="text-xl ml-2 text-start">{name}</span>
+      <span className="ml-2 text-start text-base lg:text-lg">{name}</span>
       {items > 0 && (
         <span className="absolute top-0 left-16 px-2 text-emerald-700 rounded-full bg-white">
           <span aria-hidden="true">{items}</span>
@@ -50,8 +54,8 @@ const Navbar = () => {
             <div className="flex justify-between">
                 <div className="flex space-x-2 justify-between flex-1">
                     <div>
-                        <Link href="/" className="flex items-center py-4 px-2">
-                            <span className="font-semibold text-white text-2xl">Ecommerce</span>
+                        <Link href="/" className="flex items-center py-4 px-2 text-white" aria-label={`${BRAND.name} home`}>
+                            <Logo />
                         </Link>
                     </div>                  
                     <div className="hidden md:flex items-center space-x-1">

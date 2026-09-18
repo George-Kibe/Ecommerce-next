@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const StyledTable = styled.table`
   width: 100%;
+  border-collapse: collapse;
   th{
     text-align: left;
     text-transform: uppercase;
@@ -16,12 +17,30 @@ const StyledTable = styled.table`
     font-weight: 600;
     font-size: .8rem;
     letter-spacing: .03em;
+    padding-bottom: 8px;
   }
   td{
     border-top: 1px solid rgba(0,0,0,.1);
+    padding: 8px 0;
+    vertical-align: middle;
   }
 `;
 
+/*
+  A cart row (image + title + stepper + price) is wider than a phone. Without a
+  scroll container the table forced the whole page to scroll sideways; now only
+  the table scrolls, and only when it has to.
+*/
+const Scroller = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+`;
+
 export default function Table(props) {
-  return <StyledTable {...props} />
+  return (
+    <Scroller>
+      <StyledTable {...props} />
+    </Scroller>
+  );
 }
