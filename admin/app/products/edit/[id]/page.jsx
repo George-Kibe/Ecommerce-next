@@ -1,12 +1,13 @@
 "use client"
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import ProductForm from '@/components/ProductForm';
 
 const EditProductData = ({params}) => {
   const [productData, setProductData] = useState(null)
-  const {id} = params;
+  // Next 16 passes `params` as a promise; client components unwrap it with use().
+  const {id} = use(params);
   const getProduct = async() => {
     try {
       const response = await axios.get(`/api/products?id=${id}`)

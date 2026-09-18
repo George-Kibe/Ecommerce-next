@@ -1,7 +1,7 @@
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import connect from "@/lib/db";
-import {isAdminRequest } from "../auth/[...nextauth]/route";
+import { isAdminRequest } from "@/lib/auth";
 
 async function handler(req,res){
     const {method} = req;

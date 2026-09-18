@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    // `images.domains` was removed in Next 16 — remotePatterns is the replacement.
     images: {
-        domains: [
-            "lh3.googleusercontent.com",
-            "mernbnb-images-bucket.s3.eu-west-1.amazonaws.com",
-            "mernbnb-images-bucket.s3.amazonaws.com",
-        ]
-    }
+        remotePatterns: [
+            { protocol: "https", hostname: "lh3.googleusercontent.com" },
+            { protocol: "https", hostname: "mernbnb-images-bucket.s3.eu-west-1.amazonaws.com" },
+            { protocol: "https", hostname: "mernbnb-images-bucket.s3.amazonaws.com" },
+        ],
+    },
 }
 
 module.exports = nextConfig

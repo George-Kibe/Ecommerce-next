@@ -3,7 +3,7 @@ import connect from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export const GET = async (request, {params}) => {
-    const {id} = params;
+    const {id} = await params;
     console.log(id)
     try {
         await connect();
@@ -15,7 +15,7 @@ export const GET = async (request, {params}) => {
 }
 
 export const DELETE = async (request, {params}) => {
-    const {id} = params;
+    const {id} = await params;
     try {
         await connect();
         await Product.findByIdAndDelete(id);

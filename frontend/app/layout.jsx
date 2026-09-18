@@ -3,6 +3,7 @@ import { Poppins } from 'next/font/google'
 import { CartContextProvider } from '@/context/CartContext'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
+import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry'
 
 const poppins = Poppins({ subsets: ['latin'] , weight:["400"]})
 
@@ -15,11 +16,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${poppins.className} flex flex-col justify-between bg-gray-300 min-h-screen w-full h-full`}>
-        <CartContextProvider>
-          <Navbar />
-          {children}
-          <Footer />
-        </CartContextProvider>        
+        <StyledComponentsRegistry>
+          <CartContextProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </CartContextProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   )

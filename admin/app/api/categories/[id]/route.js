@@ -3,7 +3,7 @@ import connect from "@/lib/db";
 import Category from "@/models/Category";
 
 export const DELETE = async (request, {params}) => {
-    const {id} = params;
+    const {id} = await params;
     try {
         await connect();
         await Category.findByIdAndDelete(id);
