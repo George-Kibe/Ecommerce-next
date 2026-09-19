@@ -4,7 +4,7 @@ import CartIcon from "@/components/icons/CartIcon";
 import Link from "next/link";
 import { useContext } from "react";
 import { CartContext } from "@/context/CartContext";
-import Image from "next/image";
+import ProductImage from "@/components/ProductImage";
 
 /**
  * Product card.
@@ -30,24 +30,17 @@ export default function ProductBox({ _id, title, price, images, product, eager =
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-sm transition hover:shadow-md">
-      <Link href={url} className="image-tile relative block aspect-square w-full">
-        {/* next/image throws when src is undefined, so a product with no
-            images has to render a placeholder instead. */}
-        {images?.[0] ? (
-          <Image
-            fill
-            src={images[0]}
-            // Matches the grid: 2 columns on mobile, 3 at md, 4 at lg.
-            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-contain p-3"
-            loading={eager ? "eager" : "lazy"}
-            alt={title}
-          />
-        ) : (
-          <span className="flex h-full w-full items-center justify-center bg-surface-muted text-sm text-fg-muted">
-            No image
-          </span>
-        )}
+      <Link href={url} className="relative block aspect-square w-full" tabIndex={-1} aria-hidden="true">
+        {/* The title link below is the accessible link to the product; this
+            duplicate is taken out of the tab order so keyboard users don't hit
+            every product twice. */}
+        <ProductImage
+          src={images?.[0]}
+          alt={title}
+          // Matches the grid: 2 columns on mobile, 3 at md, 4 at lg.
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          eager={eager}
+        />
       </Link>
 
       {/* mt-auto on the footer row pins price/button to the bottom so cards with

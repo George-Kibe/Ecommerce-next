@@ -1,72 +1,44 @@
 "use client"
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import { useContext } from "react";
+import { CartContext } from "@/context/CartContext";
 import Center from "./Center";
-import Title from "./Title";
-import styled from "styled-components";
-import WhiteBox from "./WhiteBox";
 import ProductImages from "./ProductImages";
 import Button from "./Button";
 import CartIcon from "./icons/CartIcon";
-import {useContext} from "react";
-import {CartContext} from "@/context/CartContext";
-;
 
-const ColWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  @media screen and (min-width: 768px) {
-    grid-template-columns: .8fr 1.2fr;
-  }
-  gap: 40px;
-  margin: 40px 0;
-`;
-/* Wraps instead of overflowing when the price and button don't fit side by
-   side on a narrow screen. */
-const PriceRow = styled.div`
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 16px;
-`;
-const Price = styled.span`
-  font-size: 1.4rem;
-`;
+export default function DetailedProduct({ product }) {
+  const { addProduct, cartProducts } = useContext(CartContext);
 
-export default  function DetailedProduct({product}) {
-  const {addProduct, cartProducts} = useContext(CartContext);
-  function handleAddToCart(product) {
-    const existingProduct = cartProducts.find((p) => p._id === product._id)
-    existingProduct && toast.success("Item Already in cart. Quantity added by one")
-    addProduct(product)
+  function handleAddToCart() {
+    const existing = cartProducts.find((p) => p._id === product._id);
+    existing && toast.success("Item already in cart — quantity increased");
+    addProduct(product);
   }
+
   return (
-    <>
-      <Center>
-        <ColWrapper>
-          <WhiteBox>
-            { product.images?.length > 0 ? <ProductImages images={product.images} /> :"No Image" }            
-          </WhiteBox>
-          <div>
-            <Title>{product.title}</Title>
-            <p>{product.description}</p>
-            <PriceRow>
-              <div>
-                {/* Was "$" while the cards and cart say "Kshs." — the same
-                    product showed two different currencies. Aligned to the
-                    label used everywhere else; which currency is actually
-                    correct is still an open question (see readme). */}
-                <Price>Kshs.&nbsp;{product.price}</Price>
-              </div>
-              <div>
-                <Button primary={1} onClick={() => handleAddToCart(product)}>
-                  <CartIcon />Add to cart
-                </Button>
-              </div>
-            </PriceRow>
+    <Center className="py-8 md:py-10">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-[2fr_3fr] md:gap-10">
+        <div className="rounded-xl border border-line bg-surface-muted p-4 md:p-6">
+          <ProductImages images={product.images ?? []} title={product.title} />
+        </div>
+
+        <div>
+          <h1 className="mb-2 text-2xl font-semibold leading-tight text-fg md:text-4xl">{product.title}</h1>
+          <p className="whitespace-pre-line text-fg-muted md:text-lg">{product.description}</p>
+
+          {/* Wraps instead of overflowing when price and button don't fit side
+              by side. "Kshs." matches the cards and cart — which currency is
+              actually correct is still open (see readme). */}
+          <div className="mt-6 flex flex-wrap items-center gap-5">
+            <span className="text-2xl font-semibold text-fg">Kshs.&nbsp;{product.price}</span>
+            <Button variant="primary" onClick={handleAddToCart} aria-label={`Add ${product.title} to cart`}>
+              <CartIcon />
+              Add to cart
+            </Button>
           </div>
-        </ColWrapper>
-      </Center>
-    </>
+        </div>
+      </div>
+    </Center>
   );
 }

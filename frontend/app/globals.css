@@ -11,11 +11,12 @@
 /*
   ─── Design tokens ──────────────────────────────────────────────────────────
 
-  Every colour in the storefront comes from here — Tailwind classes via the
-  @theme mapping below (bg-surface, text-fg, border-line, …) and the
-  styled-components via var(--token). That single source is what makes the
-  dark theme complete: a component can't be "half themed" because there is no
-  second palette to forget.
+  Every colour in this app comes from here, exposed to Tailwind by the @theme
+  mapping below (bg-surface, text-fg, border-line, …). Components use those
+  classes — never hex values or palette classes like bg-gray-200. That single
+  source is what makes the dark theme complete: a component can't be "half
+  themed" because there is no second palette to forget. (The storefront and
+  admin share these values so both read as one brand.)
 
   Every text pair was contrast-checked in both modes before use (WCAG AA:
   4.5:1 text, 3:1 non-text UI). Notable choices:
@@ -33,7 +34,7 @@
   --page: #d1d5db;
   --surface: #ffffff;
   --surface-muted: #f5f5f5;
-  --chrome: #000000;
+  --chrome: #ffffff;
 
   --fg: #111827;
   --fg-muted: #374151;
@@ -41,10 +42,11 @@
   --line: #e5e7eb;
   --divider: #d1d5db;
 
-  --chrome-fg: #d1d5db;
-  --chrome-fg-strong: #ffffff;
-  --chrome-active: #4ade80;
-  --chrome-line: #1f2937;
+  /* Navbar/footer ("chrome"): light surface in light mode, near-black in dark. */
+  --chrome-fg: #374151;
+  --chrome-fg-strong: #111827;
+  --chrome-active: #1d4ed8;
+  --chrome-line: #e5e7eb;
 
   --link: #1d4ed8;
   --accent: #1d4ed8;
@@ -87,7 +89,7 @@
 
   --chrome-fg: #d1d5db;
   --chrome-fg-strong: #ffffff;
-  --chrome-active: #4ade80;
+  --chrome-active: #93c5fd;
   --chrome-line: #1f2937;
 
   --link: #93c5fd;

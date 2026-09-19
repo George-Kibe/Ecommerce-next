@@ -1,53 +1,62 @@
-"use client"
+import Link from "next/link";
+import { auth, adminEmails } from "@/lib/auth";
+import { BRAND } from "@/lib/brand";
+import SignInButton from "@/components/SignInButton";
+import { ProductsIcon, CategoriesIcon, OrdersIcon, SettingsIcon } from "@/components/icons";
 
-import Image from 'next/image'
-import { useSession, signIn } from 'next-auth/react'
+const SHORTCUTS = [
+  { href: "/products", label: "Products", hint: "Add, edit and remove products", Icon: ProductsIcon },
+  { href: "/categories", label: "Categories", hint: "Organise products and their properties", Icon: CategoriesIcon },
+  { href: "/orders", label: "Orders", hint: "Review orders and payment status", Icon: OrdersIcon },
+  { href: "/settings", label: "Settings", hint: "Store overview and administrators", Icon: SettingsIcon },
+];
 
-export default function Home() {
-  const { data: session, status } = useSession()
+/*
+  Server component: the session is known before render, so there's no
+  "Loading…" flash while the client checks it (the old version showed one on
+  every visit).
+*/
+export default async function Home() {
+  const session = await auth();
+  const isAdmin = adminEmails.includes(session?.user?.email?.toLowerCase());
 
-  if (status === "loading") {
+  if (!isAdmin) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <p className="text-blue-900">Loading…</p>
-      </div>
-    )
-  }
-
-  if (status === "unauthenticated") {
-    return (
-      <div className="flex bg-blue-900 h-screen w-full rounded-md items-center justify-center">
-        <div className="text-center w-full">
-          <button
-            onClick={() => signIn('google')}
-            className="bg-white p-2 px-4 rounded-lg"
-          >
-            Login with Google
-          </button>
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <div className="w-full max-w-sm rounded-xl border border-line bg-surface p-8 text-center shadow-sm">
+          <h1 className="mb-1 text-2xl font-semibold text-fg">Sign in</h1>
+          <p className="mb-6 text-fg-muted">to manage {BRAND.name}</p>
+          <SignInButton />
+          <p className="mt-4 text-balance text-sm text-fg-muted">Only approved administrator accounts can sign in.</p>
         </div>
       </div>
-    )
+    );
   }
+
+  const firstName = session.user.name?.split(" ")[0];
 
   return (
-    <div className="text-blue-900 h-full w-full">
-      <div className="flex flex-row justify-between items-center px-10 py-4">
-        <h2>Hello, {session?.user?.name}</h2>
-        <div className="flex bg-gray-300 gap-1 py-1 rounded-2xl px-2 justify-center items-center text-black">
-          {session?.user?.image && (
-            <div className="w-8 h-8 relative">
-              <Image
-                src={session.user.image}
-                fill
-                sizes="32px"
-                alt=""
-                className="rounded-full object-cover"
-              />
-            </div>
-          )}
-          <p>{session?.user?.name}</p>
-        </div>
-      </div>
+    <div className="mx-auto max-w-5xl">
+      <h1 className="mb-1 text-2xl font-semibold text-fg md:text-3xl">
+        Hello{firstName ? `, ${firstName}` : ""}
+      </h1>
+      <p className="mb-6 text-fg-muted">What would you like to do?</p>
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {SHORTCUTS.map(({ href, label, hint, Icon }) => (
+          <li key={href}>
+            <Link
+              href={href}
+              className="flex h-full items-start gap-4 rounded-xl border border-line bg-surface p-5 transition-colors hover:border-link hover:bg-hover"
+            >
+              <span className="rounded-lg bg-accent-soft p-2 text-on-accent-soft"><Icon className="h-6 w-6" /></span>
+              <span>
+                <span className="block font-semibold text-fg">{label}</span>
+                <span className="block text-sm text-fg-muted">{hint}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
-  )
+  );
 }

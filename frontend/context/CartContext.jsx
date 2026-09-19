@@ -21,12 +21,16 @@ export function CartContextProvider({ children }) {
   // Tracks whether the stored cart has been loaded, so the first render (which
   // must match the server's empty cart) doesn't overwrite storage.
   const hydrated = useRef(false);
+  // Exposed to the UI so the cart page can show a skeleton instead of briefly
+  // claiming "Your cart is empty" before the saved cart is read.
+  const [cartReady, setCartReady] = useState(false);
 
   useEffect(() => {
     // localStorage is unavailable during SSR, so this can only run after mount.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCartProducts(readCart());
     hydrated.current = true;
+    setCartReady(true);
   }, []);
 
   useEffect(() => {
@@ -73,6 +77,7 @@ export function CartContextProvider({ children }) {
     <CartContext.Provider
       value={{
         cartProducts,
+        cartReady,
         setCartProducts,
         addProduct,
         removeQuantity,

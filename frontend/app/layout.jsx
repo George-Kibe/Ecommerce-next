@@ -4,7 +4,7 @@ import { Poppins } from 'next/font/google'
 import { CartContextProvider } from '@/context/CartContext'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
-import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry'
+import ThemeColorMeta from '@/components/ThemeColorMeta'
 import ThemeProvider from '@/components/ThemeProvider'
 import ThemedToastContainer from '@/components/ThemedToastContainer'
 import { BRAND, SITE_URL } from '@/lib/brand'
@@ -62,10 +62,11 @@ export const metadata = {
 }
 
 export const viewport = {
-  // Browser UI colour (address bar on mobile) — matches the navbar, which is
-  // near-black in both themes.
+  // Browser UI colour (address bar on mobile) — matches the navbar in each
+  // theme. ThemeColorMeta overrides these when the visitor picks a theme that
+  // differs from their device.
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#000000' },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#030712' },
   ],
   width: 'device-width',
@@ -118,7 +119,6 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteStructuredData()) }}
         />
         <ThemeProvider>
-        <StyledComponentsRegistry>
           <CartContextProvider>
             <Navbar />
             {/* Landmark for skip-links and screen-reader rotors. */}
@@ -130,7 +130,7 @@ export default function RootLayout({ children }) {
           {/* One container for the whole app — it used to be rendered once per
               product card, which duplicated every toast. */}
           <ThemedToastContainer />
-        </StyledComponentsRegistry>
+          <ThemeColorMeta light="#ffffff" dark="#030712" />
         </ThemeProvider>
       </body>
     </html>

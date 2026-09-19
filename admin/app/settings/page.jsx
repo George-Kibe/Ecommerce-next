@@ -3,6 +3,7 @@ import Product from "@/models/Product";
 import Category from "@/models/Category";
 import { Order } from "@/models/Order";
 import requireAdmin from "@/lib/requireAdmin";
+import { Card, PageHeader } from "@/components/ui";
 
 // Read the allowlist directly rather than importing @/lib/auth, which would
 // pull the whole Auth.js stack into this page's bundle.
@@ -39,36 +40,33 @@ export default async function SettingsPage() {
   ];
 
   return (
-    <div className="w-full h-full p-4 text-blue-900 overflow-y-auto">
-      <h1 className="mb-4 font-semibold text-xl">Settings</h1>
+    <div className="mx-auto max-w-5xl">
+      <PageHeader title="Settings" description="Store overview and who can manage it." />
 
-      <section className="mb-8">
-        <h2 className="mb-2 font-semibold">Store overview</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <section aria-labelledby="overview-heading" className="mb-8">
+        <h2 id="overview-heading" className="mb-3 text-lg font-semibold text-fg">Store overview</h2>
+        <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {cards.map((card) => (
-            <div
-              key={card.label}
-              className="rounded-lg border border-gray-300 bg-white p-4"
-            >
-              <p className="text-sm text-gray-600">{card.label}</p>
-              <p className="text-2xl font-semibold">{card.value}</p>
+            <div key={card.label} className="rounded-xl border border-line bg-surface p-4">
+              <dt className="text-sm text-fg-muted">{card.label}</dt>
+              <dd className="mt-1 text-3xl font-semibold tabular-nums text-fg">{card.value}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
 
-      <section>
-        <h2 className="mb-2 font-semibold">Administrators</h2>
-        <p className="text-sm text-gray-600 mb-2">
-          Configured via the <code>ADMIN_EMAILS</code> environment variable.
-          Changing it requires a redeploy.
+      <Card>
+        <h2 className="mb-1 text-lg font-semibold text-fg">Administrators</h2>
+        <p className="mb-3 text-sm text-fg-muted">
+          Configured with the <code className="rounded bg-surface-muted px-1 py-0.5 text-fg">ADMIN_EMAILS</code> environment
+          variable. Changing it requires a redeploy.
         </p>
-        <ul className="list-disc pl-6">
+        <ul className="divide-y divide-divider">
           {adminEmails.map((email) => (
-            <li key={email}>{email}</li>
+            <li key={email} className="py-2 text-fg">{email}</li>
           ))}
         </ul>
-      </section>
+      </Card>
     </div>
   );
 }

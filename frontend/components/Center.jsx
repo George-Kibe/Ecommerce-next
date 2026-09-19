@@ -1,14 +1,4 @@
-"use client"
-import styled from "styled-components";
-
-const StyledDiv = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-`;
-
-export default function Center({children}) {
-  return (
-    <StyledDiv>{children}</StyledDiv>
-  );
+/** Page-width container, aligned with the navbar and footer. */
+export default function Center({ children, className = "" }) {
+  return <div className={`mx-auto w-full max-w-6xl px-4 md:px-8 ${className}`}>{children}</div>;
 }

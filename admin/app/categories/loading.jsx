@@ -1,12 +1,13 @@
-import React from 'react';
+import { FormSkeleton, HeaderSkeleton, LoadingRegion, TableSkeleton } from "@/components/Skeletons";
 
-const LoadingPage = () => {
+export default function Loading() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="w-24 h-24 border-8 border-t-8 border-gray-500 rounded-full animate-spin"></div>
-      <h1 className="mt-8 text-3xl font-semibold text-gray-800">Loading...</h1>
-    </div>
+    <LoadingRegion label="Loading categories…">
+      <div className="mx-auto max-w-5xl space-y-6">
+        <HeaderSkeleton />
+        <FormSkeleton fields={2} />
+        <TableSkeleton rows={5} columns={5} />
+      </div>
+    </LoadingRegion>
   );
-};
-
-export default LoadingPage;
+}

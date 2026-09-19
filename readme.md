@@ -116,7 +116,7 @@ change must be applied in both.
 | | frontend | admin |
 | --- | --- | --- |
 | Framework | Next 16.3.5 · React 19.3 | Next 16.3.5 · React 19.3 |
-| Styling | Tailwind 4.3 + styled-components 6.5 | Tailwind 4.3 |
+| Styling | Tailwind 4.3, light/dark/system themes | Tailwind 4.3, light/dark/system themes |
 | Database | Mongoose 9.10 | Mongoose 9.10 + mongodb 6 driver |
 | Auth | — | Auth.js (NextAuth) v5 — Google |
 | Payments | Stripe 22.6 + webhook | — |

@@ -1,6 +1,7 @@
 import connect from "@/lib/db";
 import { Order } from "@/models/Order";
 import requireAdmin from "@/lib/requireAdmin";
+import { EmptyState, PageHeader, TableShell } from "@/components/ui";
 
 async function getAllOrders() {
   await connect();
@@ -18,68 +19,67 @@ export default async function OrdersPage() {
   const orders = await getAllOrders();
 
   return (
-    <div className="w-full h-full p-2 overflow-y-auto">
-      <h1 className="mb-2 font-semibold text-xl">Orders</h1>
+    <div className="mx-auto max-w-6xl">
+      <PageHeader
+        title="Orders"
+        description={orders.length ? `Latest ${orders.length} order${orders.length === 1 ? "" : "s"}, newest first` : undefined}
+      />
 
-      {orders.length === 0 && <p>No orders yet.</p>}
-
-      {orders.length > 0 && (
-        <div className="mt-4 w-full overflow-x-auto rounded-md bg-white">
-        <table className="border border-gray-400 w-full min-w-[36rem] bg-white">
-          <thead className="bg-blue-100">
+      {orders.length === 0 ? (
+        <EmptyState title="No orders yet">Orders appear here as soon as a customer checks out.</EmptyState>
+      ) : (
+        <TableShell minWidth="48rem">
+          <thead>
             <tr>
-              <th className="border border-gray-400 p-1 text-left">Date</th>
-              <th className="border border-gray-400 p-1 text-left">Paid</th>
-              <th className="border border-gray-400 p-1 text-left">Recipient</th>
-              <th className="border border-gray-400 p-1 text-left">Products</th>
+              <th>Date</th>
+              <th>Payment</th>
+              <th>Customer</th>
+              <th>Items</th>
             </tr>
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order._id}>
-                <td className="border border-gray-400 p-1">
-                  {new Date(order.createdAt).toLocaleString()}
+              <tr key={order._id} className="align-top hover:bg-hover">
+                <td className="whitespace-nowrap text-fg-muted">
+                  {new Date(order.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                 </td>
                 {/*
-                  Payment state was red/green text only. Red-green is the
-                  pairing the HIG singles out as hardest to tell apart, and
-                  green-600 on white measured 3.30:1 (below the 4.5:1 minimum).
-                  Now green-700, and the state is carried by a distinct shape
-                  and word as well as the colour.
+                  State carried by shape and word as well as colour (HIG: red and
+                  green are the hardest pair to tell apart). Colours are theme
+                  tokens, contrast-checked on the table surface in both themes.
                 */}
-                <td className="border border-gray-400 p-1">
-                  <span
-                    className={`inline-flex items-center gap-1 font-semibold ${
-                      order.paid ? "text-green-700" : "text-red-600"
-                    }`}
-                  >
+                <td>
+                  <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
+                    order.paid ? "border-success text-success" : "border-danger text-danger"
+                  }`}>
                     <span aria-hidden="true">{order.paid ? "✓" : "✕"}</span>
                     {order.paid ? "Paid" : "Unpaid"}
                   </span>
                 </td>
-                <td className="border border-gray-400 p-1">
-                  {order.name} {order.email}
-                  <br />
-                  {order.city} {order.postalCode} {order.country}
-                  <br />
-                  {order.streetAddress}
+                <td>
+                  <span className="block font-medium text-fg">{order.name}</span>
+                  <span className="block text-fg-muted">{order.email}</span>
+                  <span className="block text-fg-muted">
+                    {[order.streetAddress, order.city, order.postalCode, order.country].filter(Boolean).join(", ")}
+                  </span>
                 </td>
-                <td className="border border-gray-400 p-1">
+                <td className="text-fg">
                   {/* line_items can be absent on older or partial orders */}
-                  {Array.isArray(order.line_items) && order.line_items.length > 0
-                    ? order.line_items.map((line, index) => (
-                        <span key={index} className="block">
+                  {Array.isArray(order.line_items) && order.line_items.length > 0 ? (
+                    <ul className="space-y-0.5">
+                      {order.line_items.map((line, index) => (
+                        <li key={index}>
                           {line?.price_data?.product_data?.name ?? "Unknown item"}{" "}
-                          x{line?.quantity ?? 0}
-                        </span>
-                      ))
-                    : "—"}
+                          <span className="text-fg-muted">× {line?.quantity ?? 0}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : "—"}
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
-        </div>
+        </TableShell>
       )}
     </div>
   );

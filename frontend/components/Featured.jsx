@@ -2,7 +2,7 @@
 import { toast } from 'react-toastify';
 import { useContext } from "react";
 import { CartContext } from "@/context/CartContext";
-import Image from "next/image";
+import ProductImage from "@/components/ProductImage";
 import Link from 'next/link';
 
 /**
@@ -29,17 +29,16 @@ export default function Featured({ product }) {
       {/* Image first on mobile, second on desktop — the product should lead on
           a narrow screen rather than being pushed below the copy. */}
       <div className="order-1 md:order-2">
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg image-tile">
-          {product.images?.[0] && (
-            <Image
-              fill
-              src={product.images[0]}
-              alt={product.title}
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-              className="object-contain p-4"
-            />
-          )}
+        <div className="aspect-[4/3] w-full">
+          <ProductImage
+            src={product.images?.[0]}
+            alt={product.title}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            // The hero is the Largest Contentful Paint on the homepage.
+            priority
+            padding="p-4"
+            rounded="rounded-lg"
+          />
         </div>
       </div>
 

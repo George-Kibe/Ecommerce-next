@@ -2,9 +2,9 @@ import { HeaderSkeleton, LoadingRegion, TableSkeleton } from "@/components/Skele
 
 export default function Loading() {
   return (
-    <LoadingRegion label="Loading products…">
-      <HeaderSkeleton withAction />
-      <TableSkeleton rows={8} columns={6} withThumb />
+    <LoadingRegion label="Loading orders…">
+      <HeaderSkeleton />
+      <TableSkeleton rows={8} columns={4} />
     </LoadingRegion>
   );
 }

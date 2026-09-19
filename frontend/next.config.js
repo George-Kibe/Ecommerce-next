@@ -19,15 +19,18 @@ const securityHeaders = [
 const nextConfig = {
     // `images.domains` was removed in Next 16 — remotePatterns is the replacement.
     images: {
+        // AVIF first (smallest), WebP as the fallback; browsers that support
+        // neither still get the original format.
+        formats: ["image/avif", "image/webp"],
+        // Optimised variants are cached for a day rather than the 60s default.
+        minimumCacheTTL: 86400,
         remotePatterns: [
             { protocol: "https", hostname: "lh3.googleusercontent.com" },
             { protocol: "https", hostname: "mernbnb-images-bucket.s3.eu-west-1.amazonaws.com" },
             { protocol: "https", hostname: "dawid-next-ecommerce.s3.amazonaws.com" },
         ],
     },
-    // Required for styled-components to render correctly on the server.
     compiler: {
-        styledComponents: true,
         // Keep console.error/warn in production, drop the rest.
         removeConsole: process.env.NODE_ENV === "production"
           ? { exclude: ["error", "warn"] }

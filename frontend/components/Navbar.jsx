@@ -38,12 +38,12 @@ const NavLink = ({ href, name, count, onNavigate, block = false }) => {
       } ${
         isActive
           ? "text-chrome-active"
-          : "text-chrome-fg hover:bg-white/10 hover:text-chrome-fg-strong"
+          : "text-chrome-fg hover:bg-hover hover:text-chrome-fg-strong"
       }`}
     >
       <span className="text-base lg:text-lg">{name}</span>
       {count > 0 && (
-        <span className="rounded-full bg-white px-2 text-sm font-bold text-emerald-700">
+        <span className="rounded-full bg-accent px-2 text-sm font-bold text-on-accent">
           <span aria-hidden="true">{count}</span>
           <span className="sr-only">{`, ${count} item${count === 1 ? "" : "s"} in cart`}</span>
         </span>
@@ -67,7 +67,7 @@ const Navbar = () => {
   }, [showMobileNav]);
 
   return (
-    <header className="bg-chrome border-b border-chrome-line shadow-lg">
+    <header className="bg-chrome border-b border-chrome-line text-chrome-fg shadow-lg">
       <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2 md:px-8">
         <Link
           href="/"
@@ -96,7 +96,7 @@ const Navbar = () => {
             aria-label={showMobileNav ? "Close menu" : "Open menu"}
             aria-expanded={showMobileNav}
             aria-controls="mobile-nav"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-chrome-fg hover:bg-white/10 hover:text-chrome-fg-strong md:hidden"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-chrome-fg hover:bg-hover hover:text-chrome-fg-strong md:hidden"
           >
             {showMobileNav ? (
               <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24" aria-hidden="true">

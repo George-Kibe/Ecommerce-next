@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-   "engines": {
+  "engines": {
     "node": "24.x"
   },
   "scripts": {
@@ -19,8 +19,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-toastify": "^11.1.0",
-    "stripe": "^22.6.2",
-    "styled-components": "^6.5.3"
+    "stripe": "^22.6.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
