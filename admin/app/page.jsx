@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth, adminEmails } from "@/lib/auth";
+import { auth, adminEmails, adminAccessConfigured } from "@/lib/auth";
 import { BRAND } from "@/lib/brand";
 import SignInButton from "@/components/SignInButton";
 import { ProductsIcon, CategoriesIcon, OrdersIcon, SettingsIcon } from "@/components/icons";
@@ -26,7 +26,16 @@ export default async function Home() {
         <div className="w-full max-w-sm rounded-xl border border-line bg-surface p-8 text-center shadow-sm">
           <h1 className="mb-1 text-2xl font-semibold text-fg">Sign in</h1>
           <p className="mb-6 text-fg-muted">to manage {BRAND.name}</p>
-          <SignInButton />
+          {adminAccessConfigured ? (
+            <SignInButton />
+          ) : (
+            // Without this, signing in bounces straight back from Google with
+            // no explanation, which looks like a broken login.
+            <p role="alert" className="rounded-lg border border-danger p-3 text-sm text-danger">
+              Admin access isn&apos;t configured yet. Set <code>ADMIN_EMAILS</code> in the
+              deployment environment and redeploy.
+            </p>
+          )}
           <p className="mt-4 text-balance text-sm text-fg-muted">Only approved administrator accounts can sign in.</p>
         </div>
       </div>

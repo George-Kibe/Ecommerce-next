@@ -45,8 +45,10 @@ cd admin && npm run dev -- -p 3001  # http://localhost:3001
 Each `.env.example` documents every variable. Three are easy to miss:
 
 - **`ADMIN_EMAILS`** (admin) — comma-separated allowlist of Google accounts
-  permitted to sign in. The admin app **refuses to start** if this is empty,
-  so a misconfigured deploy fails loudly rather than admitting everyone.
+  permitted to sign in. If it's empty, **nobody** can sign in — the sign-in
+  page says access isn't configured and the server logs an error. It is not
+  read at build time, but it must be set in the Vercel project for the admin to
+  be usable.
 - **`STRIPE_WEBHOOK_SECRET`** (frontend) — without it, orders are never marked
   paid. See [Stripe webhook](#stripe-webhook).
 - **`FEATURED_PRODUCT_ID`** (frontend) — optional. The homepage falls back to
